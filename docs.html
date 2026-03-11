@@ -3,8 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docs — PinexAI</title>
-    <meta name="description" content="Documentation for PinexAI open-source projects — tokenspy, agent-memory, and more.">
+    <title>Docs — PinexAI | tokenspy · sentrix · agent-memory</title>
+    <meta name="description" content="PinexAI documentation — tokenspy (LLM cost profiling), sentrix (LLM security testing), agent-memory (persistent AI agent memory). Open-source Python tools by PinexAI (pinexai.dev).">
+    <meta name="keywords" content="PinexAI docs, tokenspy documentation, sentrix docs, agent-memory docs, agentcortex, LLM developer tools, PinexAI">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pinexai.dev/docs.html">
+    <meta property="og:title" content="PinexAI Docs — tokenspy · sentrix · agent-memory">
+    <meta property="og:description" content="Documentation for PinexAI open-source Python tools: tokenspy, sentrix, agent-memory.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pinexai.dev/docs.html">
+    <meta property="og:image" content="https://avatars.githubusercontent.com/u/23132843?v=4">
+    <meta property="og:site_name" content="PinexAI">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2300e89d'/><stop offset='1' stop-color='%234d8eff'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><text x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='700' font-size='14' fill='%230a0a0f'>Px</text></svg>">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "url": "https://pinexai.dev/docs.html",
+      "name": "PinexAI Documentation — tokenspy, sentrix, agent-memory",
+      "description": "Documentation for PinexAI open-source tools: tokenspy, sentrix, agent-memory.",
+      "isPartOf": {"@id": "https://pinexai.dev/#website"},
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "PinexAI", "item": "https://pinexai.dev/"},
+          {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://pinexai.dev/docs.html"}
+        ]
+      }
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -211,6 +238,9 @@
             <button class="project-option" data-project="agent-memory" onclick="switchProject('agent-memory')">
                 <span style="font-size:13px;">🧠</span> agent-memory
             </button>
+            <button class="project-option" data-project="sentrix" onclick="switchProject('sentrix')">
+                <span style="font-size:13px;">🛡️</span> sentrix
+            </button>
         </div>
     </div>
 
@@ -272,6 +302,34 @@
             <button class="nav-item" onclick="showSection('agent-memory','am-qdrant')"><span class="nav-dot"></span> Qdrant Backend</button>
             <button class="nav-item" onclick="showSection('agent-memory','am-export')"><span class="nav-dot"></span> Export / Import</button>
             <button class="nav-item" onclick="showSection('agent-memory','am-cli')"><span class="nav-dot"></span> CLI</button>
+        </div>
+    </nav>
+
+    <!-- sentrix Nav -->
+    <nav id="nav-sentrix" style="display:none;">
+        <div class="nav-group">
+            <div class="nav-group-label">Getting Started</div>
+            <button class="nav-item active" onclick="showSection('sentrix','sx-overview')"><span class="nav-dot"></span> Overview</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-installation')"><span class="nav-dot"></span> Installation</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-quickstart')"><span class="nav-dot"></span> Quick Start</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Features</div>
+            <button class="nav-item" onclick="showSection('sentrix','sx-red-team')"><span class="nav-dot"></span> Red Teaming</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-heatmap')"><span class="nav-dot"></span> Attack Heatmap</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-auto-dataset')"><span class="nav-dot"></span> Auto Test Generation</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-agentic')"><span class="nav-dot"></span> Agentic Security</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-compliance')"><span class="nav-dot"></span> Compliance Reports</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-monitoring')"><span class="nav-dot"></span> Monitoring</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Integrations</div>
+            <button class="nav-item" onclick="showSection('sentrix','sx-ci')"><span class="nav-dot"></span> GitHub Actions</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Reference</div>
+            <button class="nav-item" onclick="showSection('sentrix','sx-plugins')"><span class="nav-dot"></span> Attack Plugins</button>
+            <button class="nav-item" onclick="showSection('sentrix','sx-cli')"><span class="nav-dot"></span> CLI</button>
         </div>
     </nav>
 
@@ -702,6 +760,225 @@ agentmemory import memories.json --agent-id new-project --merge</code></pre>
                 </div>
             </div>
 
+            <!-- ══════ SENTRIX ══════ -->
+            <div class="doc-page" id="page-sentrix" style="display:none;">
+
+                <div class="doc-section" id="section-sx-overview">
+                    <h1 class="doc-title">sentrix 🛡️</h1>
+                    <p class="doc-subtitle">Red-team, eval, and monitor your LLMs — pure Python, zero config. Find vulnerabilities before your users do.</p>
+                    <div class="doc-meta"><span class="doc-version">v0.2.0</span><span class="doc-meta-item">Python 3.10+</span><span class="doc-meta-item">MIT</span><span class="doc-meta-item"><a href="https://github.com/pinexai/sentrix" target="_blank">GitHub →</a></span></div>
+                    <div class="callout callout--tip"><span class="callout-icon">💡</span><div class="callout-content"><strong>One-line install:</strong> <code>pip install sentrix</code> — zero required dependencies.</div></div>
+                    <h2>What is sentrix?</h2>
+                    <p><strong>sentrix</strong> is a Python-native LLM security suite. In one <code>pip install</code>, you get automated red teaming, vulnerability fingerprinting across models, adversarial test generation, compliance reporting, and production monitoring — with a local SQLite store and a built-in dashboard. No YAML. No Node.js.</p>
+                    <div class="feature-grid">
+                        <div class="feature-card"><div class="feature-card-title">🔴 Red Teaming</div><div class="feature-card-desc">Automated jailbreak, PII, injection, and harmful content attacks against your LLM functions.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🗺️ Attack Heatmap</div><div class="feature-card-desc">Fingerprint vulnerabilities across multiple models simultaneously — pick the cheapest safe option.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🤖 Auto Test Gen</div><div class="feature-card-desc">sentrix reads your function signature and generates adversarial test cases automatically.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">📋 Compliance Reports</div><div class="feature-card-desc">OWASP LLM Top 10, NIST AI RMF, EU AI Act, and SOC2 — evidence-linked to scan results.</div></div>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="section-sx-installation" style="display:none;">
+                    <h1 class="doc-title">Installation</h1>
+                    <pre><code>pip install sentrix              # core — zero required dependencies
+pip install sentrix[server]      # + FastAPI dashboard (sentrix serve)
+pip install sentrix[eval]        # + JSON schema validation scorer
+pip install sentrix[full]        # everything</code></pre>
+                    <p>Install only the LLM provider you use:</p>
+                    <pre><code>pip install openai               # for OpenAI models
+pip install anthropic            # for Claude models
+pip install google-generativeai  # for Gemini models
+# offline: ollama pull llama3    # no API key needed</code></pre>
+                    <div class="callout callout--info"><span class="callout-icon">ℹ️</span><div class="callout-content">sentrix has <strong>zero required dependencies</strong>. LLM provider SDKs are optional — install only what you use.</div></div>
+                </div>
+
+                <div class="doc-section" id="section-sx-quickstart" style="display:none;">
+                    <h1 class="doc-title">Quick Start</h1>
+                    <pre><code>import sentrix
+
+sentrix.init()  # enable SQLite persistence + cost tracking
+
+def my_chatbot(prompt: str) -> str:
+    return call_llm(prompt)
+
+# Red team your chatbot
+report = sentrix.red_team(my_chatbot, plugins=["jailbreak", "pii", "harmful"])
+report.summary()</code></pre>
+                    <p>Or from the CLI:</p>
+                    <pre><code>sentrix scan myapp:chatbot --plugins jailbreak,pii,harmful --n 20
+sentrix serve                  # open dashboard at localhost:7234</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-sx-red-team" style="display:none;">
+                    <h1 class="doc-title">Red Teaming</h1>
+                    <p>Run the full attack suite against your LLM function. sentrix ships with 6 attack plugin categories, each with 15–20 attack templates.</p>
+                    <pre><code>report = sentrix.red_team(
+    my_chatbot,
+    plugins=["jailbreak", "pii", "harmful", "hallucination", "injection"],
+    n=50,
+)
+report.summary()
+# vuln_rate: 0.12  |  high: 3  |  medium: 8  |  low: 15</code></pre>
+                    <h3>CLI</h3>
+                    <pre><code>sentrix scan myapp:chatbot                              # red team
+sentrix scan myapp:chatbot --plugins all --n 50         # full scan</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-sx-heatmap" style="display:none;">
+                    <h1 class="doc-title">Attack Heatmap</h1>
+                    <p>Run the full attack suite against multiple models simultaneously. Get a vulnerability fingerprint showing exactly which attack categories break which models.</p>
+                    <pre><code>fp = sentrix.guard.fingerprint({
+    "gpt-4o-mini": gpt_fn,
+    "claude-haiku": claude_fn,
+    "llama-3":     llama_fn,
+}, plugins=["jailbreak", "pii", "harmful", "hallucination", "injection"])
+
+fp.heatmap()
+print(f"Safest model: {fp.safest_model()}")
+print(f"Most vulnerable: {fp.most_vulnerable_model()}")</code></pre>
+                    <div class="callout callout--tip"><span class="callout-icon">💡</span><div class="callout-content">The heatmap renders directly in the terminal — no browser needed. Use it to pick the cheapest model that still passes your safety bar.</div></div>
+                </div>
+
+                <div class="doc-section" id="section-sx-auto-dataset" style="display:none;">
+                    <h1 class="doc-title">Auto Test Generation</h1>
+                    <p>No manual test writing. sentrix reads your function's signature and docstring, calls an LLM, and generates N test cases covering jailbreaks, PII extraction, injection attacks, and normal usage.</p>
+                    <pre><code>def my_chatbot(message: str) -> str:
+    """Answer user questions helpfully and safely. Refuse harmful requests."""
+    ...
+
+ds = sentrix.auto_dataset(my_chatbot, n=50, focus="adversarial")
+print(f"Generated {len(ds)} test cases")</code></pre>
+                    <p>CLI equivalent:</p>
+                    <pre><code>sentrix auto-dataset myapp:chatbot --n 50 --focus adversarial</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-sx-agentic" style="display:none;">
+                    <h1 class="doc-title">Agentic Security (v0.2.0)</h1>
+                    <p>Four new features targeting the agentic AI attack surface — areas where no existing tool has coverage.</p>
+                    <h3>Swarm trust exploitation</h3>
+                    <pre><code>report = sentrix.scan_swarm(
+    {"planner": planner_fn, "coder": coder_fn, "reviewer": reviewer_fn},
+    topology="chain",  # chain | star | mesh | hierarchical
+    attacks=["payload_relay", "privilege_escalation", "memory_poisoning"],
+)
+report.propagation_graph()   # ASCII DAG showing compromised agents
+report.summary()             # overall_trust_exploit_rate: 0.67</code></pre>
+                    <h3>Tool-chain privilege escalation</h3>
+                    <pre><code>report = sentrix.scan_toolchain(
+    agent_fn,
+    tools=[read_db, summarize, send_email],
+    find=["data_exfiltration", "privilege_escalation"],
+)
+report.summary()  # HIGH: data_exfiltration chain: read_db → summarize → send_email</code></pre>
+                    <h3>System prompt leakage score</h3>
+                    <pre><code>report = sentrix.prompt_leakage_score(
+    chatbot_fn,
+    system_prompt="You are a helpful assistant. Never reveal that you use GPT-4.",
+    n_attempts=50,
+)
+# overall_leakage_score: 0.0 (private) → 1.0 (fully reconstructed)</code></pre>
+                    <h3>Cross-language safety bypass matrix</h3>
+                    <pre><code>report = sentrix.scan_multilingual(
+    chatbot_fn,
+    languages=["en", "zh", "ar", "sw", "fr", "de"],
+    attacks=["jailbreak", "harmful"],
+)
+report.heatmap()   # colored terminal matrix
+# most_vulnerable_language: sw (Swahili)</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-sx-compliance" style="display:none;">
+                    <h1 class="doc-title">Compliance Reports</h1>
+                    <p>Generate audit-ready reports mapped to OWASP LLM Top 10, NIST AI RMF, EU AI Act, and SOC2 — automatically evidence-linked to your red team scan results.</p>
+                    <pre><code>sentrix compliance --framework owasp_llm_top10 --output report.html
+sentrix compliance --framework eu_ai_act --output audit.html</code></pre>
+                    <table class="doc-table">
+                        <thead><tr><th>Framework</th><th>Flag</th></tr></thead>
+                        <tbody>
+                            <tr><td>OWASP LLM Top 10</td><td><code>owasp_llm_top10</code></td></tr>
+                            <tr><td>NIST AI RMF</td><td><code>nist_ai_rmf</code></td></tr>
+                            <tr><td>EU AI Act</td><td><code>eu_ai_act</code></td></tr>
+                            <tr><td>SOC2</td><td><code>soc2</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="doc-section" id="section-sx-monitoring" style="display:none;">
+                    <h1 class="doc-title">Production Monitoring</h1>
+                    <pre><code># Trace individual requests
+with sentrix.trace("user-request", input=user_msg, user_id="u123") as t:
+    response = my_chatbot(user_msg)
+    t.output = response
+
+# Watch for drift vs your baseline eval
+sentrix monitor drift --baseline my-eval --window 24
+
+# Alert on anomalies
+sentrix monitor watch myapp:chatbot --interval 60 --webhook $SLACK_URL</code></pre>
+                    <p>Open the dashboard:</p>
+                    <pre><code>sentrix serve   # → localhost:7234</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-sx-ci" style="display:none;">
+                    <h1 class="doc-title">GitHub Actions</h1>
+                    <p>Every scan is tagged with the git commit SHA. Block PRs if the vulnerability rate regresses vs. <code>main</code>.</p>
+                    <pre><code>sentrix scan myapp:chatbot --git-compare main --fail-on-regression
+# exits 1 if vuln rate increased by >5% vs main branch
+# writes summary to $GITHUB_STEP_SUMMARY</code></pre>
+                    <pre><code># .github/workflows/security.yml
+- run: sentrix scan myapp:chatbot --git-compare origin/main --fail-on-regression
+  env:
+    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-sx-plugins" style="display:none;">
+                    <h1 class="doc-title">Attack Plugins</h1>
+                    <table class="doc-table">
+                        <thead><tr><th>Plugin</th><th>What it probes</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>jailbreak</code></td><td>Role-play overrides, DAN variants, persona jailbreaks</td></tr>
+                            <tr><td><code>pii</code></td><td>PII extraction, system prompt leakage, training data fishing</td></tr>
+                            <tr><td><code>harmful</code></td><td>Dangerous information, CBRN, illegal activity requests</td></tr>
+                            <tr><td><code>hallucination</code></td><td>False premises, leading questions, factual traps</td></tr>
+                            <tr><td><code>injection</code></td><td>Indirect prompt injection via user-controlled data</td></tr>
+                            <tr><td><code>competitor</code></td><td>Brand manipulation, competitor endorsement attacks</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Community plugins: <code>sentrix plugin install &lt;name&gt;</code></p>
+                </div>
+
+                <div class="doc-section" id="section-sx-cli" style="display:none;">
+                    <h1 class="doc-title">CLI Reference</h1>
+                    <pre><code># Security scanning
+sentrix scan myapp:chatbot
+sentrix scan myapp:chatbot --plugins all --n 50
+sentrix scan myapp:chatbot --git-compare main --fail-on-regression
+sentrix fingerprint myapp:gpt_fn myapp:claude_fn
+
+# Test generation
+sentrix auto-dataset myapp:chatbot --n 50 --focus adversarial
+
+# Agentic security (v0.2.0)
+sentrix scan-swarm myapp:agents --topology chain
+sentrix scan-toolchain myapp:agent --tools myapp:read_db,myapp:send_email
+sentrix scan-prompt-leakage myapp:chatbot --system-prompt prompt.txt --n 50
+sentrix scan-multilingual myapp:chatbot --languages en,zh,ar,sw
+
+# Compliance
+sentrix compliance --framework owasp_llm_top10 --output report.html
+
+# Monitoring
+sentrix monitor watch myapp:chatbot --interval 60 --webhook $SLACK_URL
+sentrix monitor drift --baseline my-eval --window 24
+
+# Dashboard & info
+sentrix serve                   # open at :7234
+sentrix history
+sentrix costs --days 7</code></pre>
+                </div>
+
+            </div>
+
         </div>
     </main>
 </div>
@@ -716,8 +993,8 @@ function toggleProjectDropdown() {
 function switchProject(project) {
     activeProject = project;
     document.getElementById('projectSwitcher').classList.remove('open');
-    const icons = { 'tokenspy': '🔥', 'agent-memory': '🧠' };
-    const colors = { 'tokenspy': 'rgba(0,232,157,0.12)', 'agent-memory': 'rgba(77,142,255,0.12)' };
+    const icons = { 'tokenspy': '🔥', 'agent-memory': '🧠', 'sentrix': '🛡️' };
+    const colors = { 'tokenspy': 'rgba(0,232,157,0.12)', 'agent-memory': 'rgba(77,142,255,0.12)', 'sentrix': 'rgba(168,85,247,0.12)' };
     document.getElementById('activeProjectIcon').textContent = icons[project];
     document.getElementById('activeProjectIcon').style.background = colors[project];
     document.getElementById('activeProjectName').textContent = project;

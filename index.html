@@ -3,9 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PinexAI — Open Source AI Developer Tools</title>
-    <meta name="description" content="PinexAI builds open-source tools for AI developers. Local-first, zero-cloud, forever free.">
-    <meta name="keywords" content="PinexAI, open source, AI tools, LLM, developer tools, tokenspy">
+    <title>PinexAI — Python Tools for LLM Developers | tokenspy · sentrix · agent-memory</title>
+    <meta name="description" content="PinexAI (pinexai.dev) builds open-source Python tools for AI developers: tokenspy for LLM cost profiling, sentrix for LLM security testing, and agent-memory for persistent AI agent memory. Local-first, zero-cloud, MIT licensed.">
+    <meta name="keywords" content="PinexAI, pinexai.dev, tokenspy, sentrix, agent-memory, agentcortex, LLM observability, LLM security, AI agent memory, open source, Python, pip install">
+    <meta name="author" content="Pinaki Mishra — PinexAI">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pinexai.dev/">
+    <meta property="og:title" content="PinexAI — Python Tools for LLM Developers">
+    <meta property="og:description" content="Open-source Python tools for AI developers: tokenspy (LLM cost profiling), sentrix (LLM security testing), agent-memory (persistent AI agent memory). Local-first, zero-cloud, MIT licensed.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pinexai.dev/">
+    <meta property="og:image" content="https://avatars.githubusercontent.com/u/23132843?v=4">
+    <meta property="og:image:alt" content="PinexAI — open-source Python tools for AI developers">
+    <meta property="og:site_name" content="PinexAI">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@pinexai">
+    <meta name="twitter:title" content="PinexAI — Python Tools for LLM Developers">
+    <meta name="twitter:description" content="Open-source Python tools for AI developers: tokenspy, sentrix, agent-memory. Local-first, zero-cloud, MIT licensed.">
+    <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/23132843?v=4">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2300e89d'/><stop offset='1' stop-color='%234d8eff'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><text x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='700' font-size='14' fill='%230a0a0f'>Px</text></svg>">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://pinexai.dev/#organization",
+          "name": "PinexAI",
+          "alternateName": "pinexai.dev",
+          "url": "https://pinexai.dev",
+          "logo": "https://avatars.githubusercontent.com/u/23132843?v=4",
+          "description": "PinexAI builds open-source Python developer tools for the AI stack. Products: tokenspy (LLM cost profiling), sentrix (LLM security testing), agent-memory (persistent AI agent memory). Local-first, zero-cloud, MIT licensed.",
+          "foundingDate": "2026",
+          "founder": {"@type": "Person", "name": "Pinaki Mishra", "url": "https://github.com/pinakimishra"},
+          "sameAs": [
+            "https://github.com/pinexai",
+            "https://pypi.org/user/pinexai/"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://pinexai.dev/#website",
+          "url": "https://pinexai.dev",
+          "name": "PinexAI",
+          "description": "Open-source Python tools for AI and LLM developers.",
+          "publisher": {"@id": "https://pinexai.dev/#organization"},
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://pinexai.dev/docs.html?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://pinexai.dev/#webpage",
+          "url": "https://pinexai.dev/",
+          "name": "PinexAI — Python Tools for LLM Developers",
+          "isPartOf": {"@id": "https://pinexai.dev/#website"},
+          "about": {"@id": "https://pinexai.dev/#organization"},
+          "description": "PinexAI open-source tools: tokenspy, sentrix, agent-memory."
+        }
+      ]
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -556,6 +616,46 @@
             color: var(--text-primary);
         }
 
+        /* ─── Mobile Nav ─── */
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+        }
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 24px 16px;
+            z-index: 99;
+        }
+        .mobile-nav.open { display: block; animation: slideDown 0.2s ease; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mobile-nav a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            transition: color 0.2s;
+        }
+        .mobile-nav a:last-child { border-bottom: none; }
+        .mobile-nav a:hover { color: var(--text-primary); }
+
         /* ─── Animations ─── */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -590,6 +690,9 @@
             .nav-links a:not(.nav-github) {
                 display: none;
             }
+            .nav-hamburger {
+                display: block;
+            }
             .footer-inner {
                 flex-direction: column;
                 gap: 16px;
@@ -618,24 +721,33 @@
             <a href="#projects">Projects</a>
             <a href="#principles">Principles</a>
             <a href="docs.html">Docs</a>
-            <a href="/docs.html">Docs</a>
             <a href="https://github.com/pinexai" class="nav-github" target="_blank">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 GitHub
             </a>
+            <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" id="hamburgerBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
         </div>
     </div>
 </nav>
 
+<div class="mobile-nav" id="mobileNav">
+    <a href="#projects" onclick="closeMobileNav()">Projects</a>
+    <a href="#principles" onclick="closeMobileNav()">Principles</a>
+    <a href="docs.html">Docs</a>
+    <a href="https://github.com/pinexai" target="_blank">GitHub</a>
+</div>
+
 <!-- Hero -->
 <section class="hero">
     <div class="container">
-        <div class="hero-badge">open source</div>
+        <div class="hero-badge">PinexAI — open source</div>
         <h1>AI tools that run<br><span class="gradient">on your machine</span></h1>
-        <p class="hero-sub">PinexAI builds open-source developer tools for the AI stack. Local-first. Zero cloud. Zero signup. Forever free.</p>
+        <p class="hero-sub"><strong>PinexAI</strong> builds open-source Python tools for the AI stack — LLM cost profiling, security testing, and agent memory. Local-first. Zero cloud. Zero signup. Forever free.</p>
         <div class="hero-stats">
             <div class="stat">
-                <div class="stat-value" id="projects-count">2</div>
+                <div class="stat-value" id="projects-count">3</div>
                 <div class="stat-label">Projects</div>
             </div>
             <div class="stat">
@@ -660,7 +772,7 @@
         <div class="projects-grid">
 
             <!-- tokenspy -->
-            <a href="https://github.com/pinexai/tokenspy" target="_blank" class="project-card reveal" style="--card-accent: var(--accent-green);">
+            <a href="tokenspy.html" class="project-card reveal" style="--card-accent: var(--accent-green);">
                 <div>
                     <div class="project-header">
                         <div class="project-icon" style="background: rgba(0,232,157,0.12); color: var(--accent-green);">🔥</div>
@@ -683,7 +795,7 @@
             </a>
 
             <!-- agent-memory -->
-            <a href="https://github.com/pinexai/agent-memory" target="_blank" class="project-card reveal" style="--card-accent: var(--accent-blue);">
+            <a href="agent-memory.html" class="project-card reveal" style="--card-accent: var(--accent-blue);">
                 <div>
                     <div class="project-header">
                         <div class="project-icon" style="background: rgba(77,142,255,0.12); color: var(--accent-blue);">🧠</div>
@@ -706,22 +818,28 @@
                 </div>
             </a>
 
-            <!-- Placeholder: next project -->
-            <div class="project-card reveal" style="--card-accent: var(--accent-purple); opacity: 0.5; cursor: default;">
+            <!-- sentrix -->
+            <a href="sentrix.html" class="project-card reveal" style="--card-accent: var(--accent-purple);">
                 <div>
                     <div class="project-header">
-                        <div class="project-icon" style="background: rgba(168,85,247,0.12); color: var(--accent-purple);">⚡</div>
-                        <div class="project-name">coming soon</div>
+                        <div class="project-icon" style="background: rgba(168,85,247,0.12); color: var(--accent-purple);">🛡️</div>
+                        <div class="project-name">sentrix</div>
                     </div>
-                    <p class="project-desc">Next project in the pipeline. Follow us on GitHub to get notified when we ship something new.</p>
+                    <p class="project-desc">Red-team, eval, and monitor your LLMs — pure Python, zero config. Auto-generate adversarial tests, fingerprint vulnerabilities across models with an attack heatmap, and export OWASP / NIST compliance reports. Find vulnerabilities before your users do.</p>
                     <div class="project-tags">
-                        <span class="tag">tba</span>
+                        <span class="tag">python</span>
+                        <span class="tag">llm-security</span>
+                        <span class="tag">red-teaming</span>
+                        <span class="tag">owasp</span>
+                        <span class="tag">adversarial</span>
                     </div>
                 </div>
                 <div class="project-meta">
-                    <span class="project-status project-status--soon">planned</span>
+                    <span class="project-status project-status--live">v0.2.0</span>
+                    <span class="project-pip">pip install sentrix</span>
+                    <span class="project-arrow">→</span>
                 </div>
-            </div>
+            </a>
 
         </div>
     </div>
@@ -809,6 +927,18 @@
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Mobile nav toggle
+    function toggleMobileNav() {
+        const menu = document.getElementById('mobileNav');
+        const btn = document.getElementById('hamburgerBtn');
+        const isOpen = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen);
+    }
+    function closeMobileNav() {
+        document.getElementById('mobileNav').classList.remove('open');
+        document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+    }
 </script>
 
 </body>

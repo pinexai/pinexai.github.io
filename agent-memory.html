@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>agent-memory — Persistent Memory for AI Agents | PinexAI</title>
+    <meta name="description" content="agent-memory: production-ready persistent memory for AI agents. Three-tier architecture (working, episodic, semantic). Works with LangChain, CrewAI, AutoGen in 3 lines.">
+    <meta property="og:title" content="agent-memory — Persistent Memory for AI Agents | PinexAI">
+    <meta property="og:description" content="PinexAI agent-memory: production-ready persistent memory for AI agents. Three-tier architecture that mirrors human memory. Works with LangChain, CrewAI, AutoGen. pip install agentcortex">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pinexai.dev/agent-memory.html">
+    <meta property="og:image" content="https://avatars.githubusercontent.com/u/23132843?v=4">
+    <meta property="og:site_name" content="PinexAI">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@pinexai">
+    <meta name="twitter:title" content="agent-memory — Persistent Memory for AI Agents | PinexAI">
+    <meta name="twitter:description" content="PinexAI agent-memory: persistent memory for AI agents. pip install agentcortex">
+    <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/23132843?v=4">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pinexai.dev/agent-memory.html">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://pinexai.dev/agent-memory.html#software",
+          "name": "agent-memory",
+          "alternateName": ["PinexAI agent-memory", "agentcortex"],
+          "description": "Production-ready persistent memory for AI agents. Three-tier architecture (working, episodic, semantic) that mirrors human memory. Works with LangChain, CrewAI, AutoGen, and raw Anthropic/OpenAI SDKs in 3 lines of code.",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Python 3.10+",
+          "softwareVersion": "0.1.2",
+          "license": "https://opensource.org/licenses/MIT",
+          "url": "https://pinexai.dev/agent-memory.html",
+          "downloadUrl": "https://pypi.org/project/agentcortex/",
+          "codeRepository": "https://github.com/pinexai/agent-memory",
+          "author": {"@id": "https://pinexai.dev/#organization"},
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+          "keywords": "AI agent memory, persistent memory, LangChain memory, CrewAI memory, AutoGen memory, MCP memory, agentcortex, PinexAI"
+        },
+        {
+          "@type": "WebPage",
+          "url": "https://pinexai.dev/agent-memory.html",
+          "name": "agent-memory — Persistent Memory for AI Agents | PinexAI",
+          "isPartOf": {"@id": "https://pinexai.dev/#website"},
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {"@type": "ListItem", "position": 1, "name": "PinexAI", "item": "https://pinexai.dev/"},
+              {"@type": "ListItem", "position": 2, "name": "agent-memory", "item": "https://pinexai.dev/agent-memory.html"}
+            ]
+          }
+        }
+      ]
+    }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2300e89d'/><stop offset='1' stop-color='%234d8eff'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><text x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='700' font-size='14' fill='%230a0a0f'>Px</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --bg-sidebar: #0e0e14;
+            --border: #252533;
+            --border-hover: #3a3a50;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --accent: #4d8eff;
+            --accent-dim: #4d8eff18;
+            --accent-green: #00e89d;
+            --accent-purple: #a855f7;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --sidebar-width: 260px;
+            --header-height: 56px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-display); background: var(--bg-primary); color: var(--text-primary); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 1000; }
+
+        .top-header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); background: rgba(10,10,15,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); z-index: 200; display: flex; align-items: center; padding: 0 24px; gap: 16px; }
+        .logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+        .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent-green), var(--accent)); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 700; font-size: 12px; color: var(--bg-primary); }
+        .logo-text { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+        .logo-text span { color: var(--text-muted); font-weight: 400; }
+        .header-sep { color: var(--border); font-size: 18px; }
+        .header-product { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--accent); }
+        .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+        .header-link { color: var(--text-secondary); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .header-link:hover { color: var(--text-primary); }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); cursor: pointer; padding: 4px; }
+
+        .product-hero { margin-top: var(--header-height); padding: 48px 0 40px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, rgba(77,142,255,0.04) 0%, transparent 100%); position: relative; overflow: hidden; }
+        .product-hero::before { content: ''; position: absolute; top: -100px; right: -150px; width: 400px; height: 400px; background: var(--accent); border-radius: 50%; filter: blur(120px); opacity: 0.06; pointer-events: none; }
+        .hero-inner { max-width: 900px; margin: 0 auto; padding: 0 48px; }
+        .hero-top { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 24px; }
+        .hero-icon { width: 56px; height: 56px; border-radius: 14px; background: rgba(77,142,255,0.12); border: 1px solid rgba(77,142,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+        .hero-name-block h1 { font-family: var(--font-mono); font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+        .hero-name-block p { color: var(--text-secondary); font-size: 16px; margin-top: 4px; line-height: 1.5; }
+        .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .badge { font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; border-radius: 100px; }
+        .badge--version { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(77,142,255,0.2); }
+        .badge--lang { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border); }
+        .hero-install { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .install-cmd { font-family: var(--font-mono); font-size: 14px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
+        .install-cmd span { color: var(--text-muted); }
+        .copy-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; transition: color 0.2s; }
+        .copy-btn:hover { color: var(--accent); }
+        .hero-links { display: flex; gap: 8px; }
+        .hero-link { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; font-family: var(--font-mono); }
+        .hero-link--primary { background: var(--accent); color: #fff; }
+        .hero-link--primary:hover { background: #6aa3ff; }
+        .hero-link--secondary { border: 1px solid var(--border); color: var(--text-secondary); }
+        .hero-link--secondary:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--bg-card); }
+
+        .layout { display: flex; }
+        .sidebar { width: var(--sidebar-width); flex-shrink: 0; position: fixed; top: calc(var(--header-height) + 145px); left: 0; bottom: 0; overflow-y: auto; background: var(--bg-sidebar); border-right: 1px solid var(--border); padding: 16px 0; z-index: 100; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .nav-group { padding: 0 12px; margin-bottom: 8px; }
+        .nav-group-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 8px 12px 6px; }
+        .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 7px; font-size: 13px; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; font-family: var(--font-display); }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-dim); color: var(--accent); }
+        .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+        .nav-item.active .nav-dot { background: var(--accent); }
+        .sidebar-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+
+        .main { margin-left: var(--sidebar-width); flex: 1; min-width: 0; }
+        .content-wrapper { max-width: 820px; margin: 0 auto; padding: 48px 48px 120px; }
+        .doc-title { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+        .doc-subtitle { font-size: 16px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px; }
+        .doc-section { margin-bottom: 48px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .doc-section h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 14px; padding-top: 8px; }
+        .doc-section h3 { font-size: 17px; font-weight: 600; margin-bottom: 10px; margin-top: 28px; }
+        .doc-section p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 14px; }
+        .doc-section a { color: var(--accent); text-decoration: none; }
+        .doc-section a:hover { text-decoration: underline; }
+        .doc-section ul, .doc-section ol { color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 14px; padding-left: 24px; }
+        .doc-section li { margin-bottom: 6px; }
+        .doc-section strong { color: var(--text-primary); font-weight: 600; }
+        pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; overflow-x: auto; }
+        pre code { font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--text-primary); }
+        code:not(pre code) { font-family: var(--font-mono); font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 5px; padding: 2px 6px; color: var(--accent); }
+        .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+        .doc-table th { text-align: left; padding: 10px 16px; border-bottom: 2px solid var(--border); font-weight: 600; font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+        .doc-table td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        .doc-table tr:hover td { background: rgba(255,255,255,0.015); }
+        .callout { padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; display: flex; gap: 12px; }
+        .callout-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+        .callout-content { color: var(--text-secondary); }
+        .callout-content strong { color: var(--text-primary); }
+        .callout--tip { background: rgba(0,232,157,0.06); border: 1px solid rgba(0,232,157,0.15); }
+        .callout--info { background: var(--accent-dim); border: 1px solid rgba(77,142,255,0.15); }
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .feature-card { padding: 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card); }
+        .feature-card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .feature-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .arch-tier { border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 12px; background: var(--bg-card); }
+        .arch-tier-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .arch-tier-badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 10px; border-radius: 100px; }
+        .arch-tier-title { font-size: 15px; font-weight: 600; }
+        .arch-tier-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; }
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block; }
+            .sidebar { top: var(--header-height); transform: translateX(-100%); transition: transform 0.25s ease; z-index: 150; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main { margin-left: 0; }
+            .content-wrapper { padding: 32px 20px 80px; }
+            .hero-inner { padding: 0 20px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .hero-install { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-header">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <a href="index.html" class="logo-link">
+        <div class="logo-mark">Px</div>
+        <div class="logo-text">pinexai<span>.dev</span></div>
+    </a>
+    <span class="header-sep">/</span>
+    <span class="header-product">agent-memory</span>
+    <div class="header-right">
+        <a href="docs.html" class="header-link">All Docs</a>
+        <a href="https://github.com/pinexai/agent-memory" class="header-link" target="_blank">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+        </a>
+    </div>
+</header>
+
+<div class="product-hero">
+    <div class="hero-inner">
+        <div class="hero-top">
+            <div class="hero-icon">🧠</div>
+            <div class="hero-name-block">
+                <h1>agent-memory</h1>
+                <p>Production-ready persistent memory for AI agents. Three-tier architecture in 3 lines of code.</p>
+            </div>
+        </div>
+        <div class="hero-badges">
+            <span class="badge badge--version">v0.1.2</span>
+            <span class="badge badge--lang">Python 3.10+</span>
+            <span class="badge badge--lang">MIT License</span>
+            <span class="badge badge--lang">MCP compatible</span>
+        </div>
+        <div class="hero-install">
+            <div class="install-cmd">
+                <span>$</span> pip install agentcortex
+                <button class="copy-btn" onclick="copyInstall('pip install agentcortex', this)" title="Copy">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+            </div>
+            <div class="hero-links">
+                <a href="https://github.com/pinexai/agent-memory" class="hero-link hero-link--primary" target="_blank">GitHub →</a>
+                <a href="https://pypi.org/project/agentcortex/" class="hero-link hero-link--secondary" target="_blank">PyPI</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <nav>
+        <div class="nav-group">
+            <div class="nav-group-label">Getting Started</div>
+            <button class="nav-item active" onclick="show('overview')"><span class="nav-dot"></span> Overview</button>
+            <button class="nav-item" onclick="show('installation')"><span class="nav-dot"></span> Installation</button>
+            <button class="nav-item" onclick="show('quickstart')"><span class="nav-dot"></span> Quick Start</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Core Concepts</div>
+            <button class="nav-item" onclick="show('architecture')"><span class="nav-dot"></span> Memory Architecture</button>
+            <button class="nav-item" onclick="show('api')"><span class="nav-dot"></span> API Reference</button>
+            <button class="nav-item" onclick="show('async')"><span class="nav-dot"></span> Async Support</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Integrations</div>
+            <button class="nav-item" onclick="show('anthropic')"><span class="nav-dot"></span> Anthropic</button>
+            <button class="nav-item" onclick="show('openai')"><span class="nav-dot"></span> OpenAI</button>
+            <button class="nav-item" onclick="show('langchain')"><span class="nav-dot"></span> LangChain</button>
+            <button class="nav-item" onclick="show('crewai')"><span class="nav-dot"></span> CrewAI</button>
+            <button class="nav-item" onclick="show('autogen')"><span class="nav-dot"></span> AutoGen</button>
+            <button class="nav-item" onclick="show('mcp')"><span class="nav-dot"></span> MCP / Claude Code</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Advanced</div>
+            <button class="nav-item" onclick="show('qdrant')"><span class="nav-dot"></span> Qdrant Backend</button>
+            <button class="nav-item" onclick="show('export')"><span class="nav-dot"></span> Export / Import</button>
+            <button class="nav-item" onclick="show('cli')"><span class="nav-dot"></span> CLI</button>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="nav-group">
+            <button class="nav-item" onclick="location.href='index.html'"><span class="nav-dot"></span> ← All Projects</button>
+            <button class="nav-item" onclick="window.open('https://pypi.org/project/agentcortex/','_blank')"><span class="nav-dot"></span> PyPI</button>
+        </div>
+    </nav>
+</aside>
+
+<div class="layout">
+    <main class="main">
+        <div class="content-wrapper">
+
+            <div class="doc-section" id="sec-overview">
+                <h1 class="doc-title">Overview</h1>
+                <p class="doc-subtitle">Give your AI agents the gift of memory. Persistent, structured, and works with every major framework.</p>
+                <div class="callout callout--tip">
+                    <span class="callout-icon">💡</span>
+                    <div class="callout-content"><strong>One-line install:</strong> <code>pip install agentcortex</code> — works with LangChain, CrewAI, AutoGen, and raw SDKs.</div>
+                </div>
+                <h2>The Problem</h2>
+                <p>AI agents are stateless by default. Every conversation starts fresh — they forget everything. Building custom memory systems on top of raw LLM APIs is complex, error-prone, and not portable between frameworks.</p>
+                <p><strong>agent-memory solves this with a production-ready three-tier memory system</strong> that mirrors how human memory actually works. One import. Three lines. Works with any agent framework.</p>
+                <div class="feature-grid">
+                    <div class="feature-card"><div class="feature-card-title">🧠 Three-tier architecture</div><div class="feature-card-desc">Working, episodic, and semantic memory — just like human cognition.</div></div>
+                    <div class="feature-card"><div class="feature-card-title">🔌 Universal compatibility</div><div class="feature-card-desc">LangChain, CrewAI, AutoGen, Anthropic, OpenAI, MCP — all supported.</div></div>
+                    <div class="feature-card"><div class="feature-card-title">⚡ 3 lines of code</div><div class="feature-card-desc">Drop-in memory for any agent in under a minute. No config files.</div></div>
+                    <div class="feature-card"><div class="feature-card-title">💾 Local SQLite default</div><div class="feature-card-desc">Data stays on your machine. Swap to Qdrant for semantic search at scale.</div></div>
+                </div>
+            </div>
+
+            <div class="doc-section" id="sec-installation" style="display:none;">
+                <h1 class="doc-title">Installation</h1>
+                <pre><code>pip install agentcortex           # core (SQLite backend)
+pip install agentcortex[qdrant]   # + Qdrant vector backend
+pip install agentcortex[langchain] # + LangChain integration helpers
+pip install agentcortex[all]      # everything</code></pre>
+                <h2>Requirements</h2>
+                <ul>
+                    <li>Python 3.10 or newer</li>
+                    <li>Any LLM framework (optional — works with raw SDKs too)</li>
+                </ul>
+            </div>
+
+            <div class="doc-section" id="sec-quickstart" style="display:none;">
+                <h1 class="doc-title">Quick Start</h1>
+                <pre><code>from agentcortex import MemoryStore
+
+memory = MemoryStore(agent_id="my-agent")
+
+# Store a memory
+memory.add("User prefers concise answers in bullet points")
+
+# Retrieve relevant memories before responding
+context = memory.recall("What are the user's preferences?")
+print(context)  # → relevant memories ranked by similarity
+
+# Use in your agent
+def my_agent(user_input):
+    past_context = memory.recall(user_input)
+    response = call_llm(f"Context: {past_context}\n\nUser: {user_input}")
+    memory.add(f"User asked: {user_input}. Agent responded: {response}")
+    return response</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-architecture" style="display:none;">
+                <h1 class="doc-title">Memory Architecture</h1>
+                <p>agent-memory uses a three-tier system that mirrors human memory — so your agent remembers the right things at the right time.</p>
+                <div class="arch-tier">
+                    <div class="arch-tier-header">
+                        <span class="arch-tier-badge" style="background:rgba(0,232,157,0.1);color:#00e89d;border:1px solid rgba(0,232,157,0.2);">Tier 1</span>
+                        <span class="arch-tier-title">Working Memory</span>
+                    </div>
+                    <p class="arch-tier-desc">Short-term context for the current session. Fast, in-memory, auto-cleared when the session ends. Used for the active conversation window and immediate task state.</p>
+                </div>
+                <div class="arch-tier">
+                    <div class="arch-tier-header">
+                        <span class="arch-tier-badge" style="background:rgba(77,142,255,0.1);color:#4d8eff;border:1px solid rgba(77,142,255,0.2);">Tier 2</span>
+                        <span class="arch-tier-title">Episodic Memory</span>
+                    </div>
+                    <p class="arch-tier-desc">Timestamped record of past interactions. Persisted to SQLite. Used for conversation history, task outcomes, and user preference patterns.</p>
+                </div>
+                <div class="arch-tier">
+                    <div class="arch-tier-header">
+                        <span class="arch-tier-badge" style="background:rgba(168,85,247,0.1);color:#a855f7;border:1px solid rgba(168,85,247,0.2);">Tier 3</span>
+                        <span class="arch-tier-title">Semantic Memory</span>
+                    </div>
+                    <p class="arch-tier-desc">Vector-embedded factual knowledge. Retrieved by similarity, not recency. Used for long-term facts, user profiles, and domain knowledge. Backed by SQLite (default) or Qdrant.</p>
+                </div>
+            </div>
+
+            <div class="doc-section" id="sec-api" style="display:none;">
+                <h1 class="doc-title">API Reference</h1>
+                <h2>MemoryStore</h2>
+                <pre><code>from agentcortex import MemoryStore
+
+memory = MemoryStore(
+    agent_id="my-agent",          # unique agent identifier (required)
+    working_size=20,               # max items in working memory (default: 20)
+    episodic_limit=1000,           # max episodic records to keep (default: 1000)
+    semantic_backend="sqlite",     # "sqlite" | "qdrant"
+)
+
+# Write
+memory.add("fact or observation")             # auto-categorized
+memory.working.add("current task state")       # working memory only
+memory.episodic.add("what just happened")      # episodic only
+memory.semantic.add("long-term fact")          # semantic only
+
+# Read
+memory.recall(query, top_k=5)                 # semantic similarity search
+memory.working.get_all()                       # all working memory items
+memory.episodic.recent(n=10)                   # last N episodic records
+memory.semantic.search(query, top_k=5)         # explicit semantic search
+
+# Manage
+memory.clear(tier="working")                  # clear one tier
+memory.clear()                                # clear all
+memory.export_json("backup.json")</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-async" style="display:none;">
+                <h1 class="doc-title">Async Support</h1>
+                <pre><code>from agentcortex import AsyncMemoryStore
+
+memory = AsyncMemoryStore(agent_id="my-async-agent")
+
+async def my_async_agent(user_input):
+    context = await memory.recall(user_input)
+    response = await async_call_llm(f"Context: {context}\n\n{user_input}")
+    await memory.add(f"interaction: {user_input} → {response}")
+    return response</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-anthropic" style="display:none;">
+                <h1 class="doc-title">Anthropic Integration</h1>
+                <pre><code>from agentcortex import MemoryStore
+from anthropic import Anthropic
+
+memory = MemoryStore(agent_id="claude-agent")
+client = Anthropic()
+
+def agent(user_message):
+    context = memory.recall(user_message, top_k=5)
+
+    response = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        system=f"You are a helpful assistant. Relevant past context:\n{context}",
+        messages=[{"role": "user", "content": user_message}]
+    )
+
+    result = response.content[0].text
+    memory.add(f"User: {user_message}\nAssistant: {result}")
+    return result</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-openai" style="display:none;">
+                <h1 class="doc-title">OpenAI Integration</h1>
+                <pre><code>from agentcortex import MemoryStore
+from openai import OpenAI
+
+memory = MemoryStore(agent_id="gpt-agent")
+client = OpenAI()
+
+def agent(user_message):
+    context = memory.recall(user_message, top_k=5)
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": f"Relevant context:\n{context}"},
+            {"role": "user",   "content": user_message},
+        ]
+    )
+
+    result = response.choices[0].message.content
+    memory.add(f"User: {user_message}\nAssistant: {result}")
+    return result</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-langchain" style="display:none;">
+                <h1 class="doc-title">LangChain Integration</h1>
+                <pre><code>from agentcortex.integrations.langchain import AgentCortexMemory
+from langchain_openai import ChatOpenAI
+from langchain.agents import AgentExecutor, create_openai_functions_agent
+
+# Drop in as a LangChain memory object
+memory = AgentCortexMemory(agent_id="langchain-agent")
+
+llm = ChatOpenAI(model="gpt-4o-mini")
+agent = create_openai_functions_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, memory=memory)
+
+# Memory is persisted automatically across runs
+executor.invoke({"input": "Remember that I prefer metric units"})
+executor.invoke({"input": "What unit system do I prefer?"})
+# → "You prefer metric units"</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-crewai" style="display:none;">
+                <h1 class="doc-title">CrewAI Integration</h1>
+                <pre><code>from agentcortex.integrations.crewai import AgentCortexMemory
+from crewai import Agent, Task, Crew
+
+memory = AgentCortexMemory(agent_id="crew-agent")
+
+researcher = Agent(
+    role="Researcher",
+    goal="Research and summarize topics",
+    backstory="Expert researcher with perfect memory",
+    memory=memory,  # persistent memory across tasks
+)
+
+task = Task(description="Research quantum computing trends", agent=researcher)
+crew = Crew(agents=[researcher], tasks=[task])
+crew.kickoff()</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-autogen" style="display:none;">
+                <h1 class="doc-title">AutoGen Integration</h1>
+                <pre><code>from agentcortex.integrations.autogen import MemoryAgent
+import autogen
+
+memory_agent = MemoryAgent(
+    name="AssistantWithMemory",
+    agent_id="autogen-agent",
+    llm_config={"model": "gpt-4o-mini"},
+)
+
+user = autogen.UserProxyAgent("user")
+
+# Memory is automatically stored and retrieved between conversations
+user.initiate_chat(memory_agent, message="My name is Alex and I work in fintech")</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-mcp" style="display:none;">
+                <h1 class="doc-title">MCP / Claude Code</h1>
+                <p>agent-memory ships as an MCP (Model Context Protocol) server. Use it directly from Claude Code or any MCP-compatible client.</p>
+                <pre><code># Start the MCP server
+agentmemory serve-mcp
+
+# Or in claude_desktop_config.json:
+{
+  "mcpServers": {
+    "agent-memory": {
+      "command": "agentmemory",
+      "args": ["serve-mcp", "--agent-id", "claude-code"]
+    }
+  }
+}</code></pre>
+                <div class="callout callout--info">
+                    <span class="callout-icon">ℹ️</span>
+                    <div class="callout-content">Once connected, Claude Code can call <strong>remember</strong>, <strong>recall</strong>, and <strong>forget</strong> tools directly to maintain persistent context across sessions.</div>
+                </div>
+            </div>
+
+            <div class="doc-section" id="sec-qdrant" style="display:none;">
+                <h1 class="doc-title">Qdrant Backend</h1>
+                <p>Swap the default SQLite backend for Qdrant for high-performance semantic search at scale.</p>
+                <pre><code>pip install agentcortex[qdrant]</code></pre>
+                <pre><code>from agentcortex import MemoryStore
+
+memory = MemoryStore(
+    agent_id="my-agent",
+    semantic_backend="qdrant",
+    qdrant_url="http://localhost:6333",
+    # qdrant_api_key="..."  # for Qdrant Cloud
+)</code></pre>
+                <div class="callout callout--tip">
+                    <span class="callout-icon">💡</span>
+                    <div class="callout-content">Start Qdrant locally with Docker: <code>docker run -p 6333:6333 qdrant/qdrant</code></div>
+                </div>
+            </div>
+
+            <div class="doc-section" id="sec-export" style="display:none;">
+                <h1 class="doc-title">Export / Import</h1>
+                <pre><code># Export all memories to JSON
+memory.export_json("backup.json")
+
+# Import into a new agent
+new_memory = MemoryStore(agent_id="new-agent")
+new_memory.import_json("backup.json")
+
+# Merge into existing memories
+new_memory.import_json("backup.json", merge=True)</code></pre>
+            </div>
+
+            <div class="doc-section" id="sec-cli" style="display:none;">
+                <h1 class="doc-title">Memory CLI</h1>
+                <pre><code># Inspect stored memories
+agentmemory inspect --agent-id my-project
+
+# Search memories
+agentmemory search "user preferences" --agent-id my-project
+
+# Export / Import
+agentmemory export --agent-id my-project --output memories.json
+agentmemory import memories.json --agent-id new-project --merge
+
+# Clear memories
+agentmemory clear --agent-id my-project --tier working
+
+# Start MCP server
+agentmemory serve-mcp --agent-id my-project</code></pre>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+function show(id) {
+    document.querySelectorAll('.doc-section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    const sec = document.getElementById('sec-' + id);
+    if (sec) { sec.style.display = 'block'; sec.style.animation = 'none'; sec.offsetHeight; sec.style.animation = 'fadeIn 0.4s ease'; }
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toggleSidebar(false);
+}
+function toggleSidebar(force) {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const open = force !== undefined ? force : !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', open);
+    overlay.classList.toggle('open', open);
+}
+function copyInstall(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4d8eff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+        setTimeout(() => { btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'; }, 2000);
+    });
+}
+</script>
+</body>
+</html>
