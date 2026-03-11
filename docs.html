@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs — PinexAI</title>
+    <meta name="description" content="Documentation for PinexAI open-source projects — tokenspy, agent-memory, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --bg-sidebar: #0e0e14;
+            --border: #252533;
+            --border-hover: #3a3a50;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --accent-green: #00e89d;
+            --accent-green-dim: #00e89d18;
+            --accent-blue: #4d8eff;
+            --accent-blue-dim: #4d8eff18;
+            --accent-purple: #a855f7;
+            --accent-orange: #ff8c42;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --sidebar-width: 280px;
+            --header-height: 56px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-display);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* ─── Header ─── */
+        .top-header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 200;
+            display: flex; align-items: center; padding: 0 24px;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; width: var(--sidebar-width); flex-shrink: 0; }
+        .logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+        .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 700; font-size: 12px; color: var(--bg-primary); }
+        .logo-text { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+        .logo-text span { color: var(--text-muted); font-weight: 400; }
+        .docs-badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--accent-green-dim); color: var(--accent-green); border: 1px solid rgba(0,232,157,0.15); text-transform: uppercase; letter-spacing: 0.05em; }
+        .header-center { flex: 1; display: flex; justify-content: center; padding: 0 24px; }
+        .search-box { width: 100%; max-width: 480px; position: relative; }
+        .search-box input { width: 100%; padding: 8px 16px 8px 38px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: var(--font-display); font-size: 13px; outline: none; transition: border-color 0.2s; }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-box input:focus { border-color: var(--border-hover); }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-shortcut { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-muted); }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .header-link { color: var(--text-secondary); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .header-link:hover { color: var(--text-primary); }
+
+        /* ─── Layout ─── */
+        .layout { display: flex; padding-top: var(--header-height); min-height: 100vh; }
+
+        /* ─── Sidebar ─── */
+        .sidebar { width: var(--sidebar-width); flex-shrink: 0; position: fixed; top: var(--header-height); left: 0; bottom: 0; overflow-y: auto; background: var(--bg-sidebar); border-right: 1px solid var(--border); padding: 20px 0; z-index: 100; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .project-switcher { padding: 0 16px; margin-bottom: 20px; }
+        .project-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: 13px; transition: all 0.2s; }
+        .project-btn:hover { border-color: var(--border-hover); }
+        .project-btn-icon { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+        .project-btn-arrow { margin-left: auto; color: var(--text-muted); font-size: 10px; transition: transform 0.2s; }
+        .project-switcher.open .project-btn-arrow { transform: rotate(180deg); }
+        .project-dropdown { display: none; margin-top: 6px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card); overflow: hidden; }
+        .project-switcher.open .project-dropdown { display: block; }
+        .project-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary); transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; }
+        .project-option:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .project-option.active { color: var(--accent-green); background: var(--accent-green-dim); }
+        .project-option + .project-option { border-top: 1px solid var(--border); }
+
+        .nav-group { padding: 0 12px; margin-bottom: 8px; }
+        .nav-group-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 8px 12px 6px; }
+        .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 7px; font-size: 13px; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; font-family: var(--font-display); }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-green-dim); color: var(--accent-green); }
+        .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+        .nav-item.active .nav-dot { background: var(--accent-green); }
+        .sidebar-divider { height: 1px; background: var(--border); margin: 12px 16px; }
+
+        /* ─── Main ─── */
+        .main { margin-left: var(--sidebar-width); flex: 1; min-width: 0; }
+        .content-wrapper { max-width: 820px; margin: 0 auto; padding: 48px 48px 120px; }
+
+        /* ─── Content Typography ─── */
+        .doc-title { font-size: 36px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+        .doc-subtitle { font-size: 17px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+        .doc-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .doc-version { font-family: var(--font-mono); font-size: 12px; padding: 3px 10px; border-radius: 100px; background: var(--accent-green-dim); color: var(--accent-green); border: 1px solid rgba(0,232,157,0.15); }
+        .doc-meta-item { font-size: 13px; color: var(--text-muted); }
+        .doc-meta-item a { color: var(--text-secondary); text-decoration: none; }
+        .doc-meta-item a:hover { color: var(--accent-green); }
+
+        .doc-section { margin-bottom: 48px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .doc-section h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; padding-top: 8px; }
+        .doc-section h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; margin-top: 32px; }
+        .doc-section p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 16px; }
+        .doc-section a { color: var(--accent-green); text-decoration: none; }
+        .doc-section a:hover { text-decoration: underline; }
+        .doc-section ul { color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 16px; padding-left: 24px; }
+        .doc-section li { margin-bottom: 6px; }
+        .doc-section strong { color: var(--text-primary); font-weight: 600; }
+
+        pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; overflow-x: auto; position: relative; }
+        pre code { font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--text-primary); }
+        code:not(pre code) { font-family: var(--font-mono); font-size: 13px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 5px; padding: 2px 6px; color: var(--accent-green); }
+
+        .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+        .doc-table th { text-align: left; padding: 10px 16px; border-bottom: 2px solid var(--border); font-weight: 600; font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+        .doc-table td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        .doc-table tr:hover td { background: rgba(255,255,255,0.015); }
+
+        .callout { padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; display: flex; gap: 12px; }
+        .callout-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+        .callout-content { color: var(--text-secondary); }
+        .callout-content strong { color: var(--text-primary); }
+        .callout--tip { background: var(--accent-green-dim); border: 1px solid rgba(0,232,157,0.15); }
+        .callout--info { background: var(--accent-blue-dim); border: 1px solid rgba(77,142,255,0.15); }
+
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .feature-card { padding: 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card); }
+        .feature-card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .feature-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        /* ─── Mobile ─── */
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); cursor: pointer; padding: 4px; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; }
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block; }
+            .sidebar { transform: translateX(-100%); transition: transform 0.25s ease; z-index: 150; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main { margin-left: 0; }
+            .content-wrapper { padding: 32px 20px 80px; }
+            .header-left { width: auto; }
+            .search-box { display: none; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-header">
+    <div class="header-left">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+        <a href="index.html" class="logo-link">
+            <div class="logo-mark">Px</div>
+            <div class="logo-text">pinexai<span>.dev</span></div>
+        </a>
+        <span class="docs-badge">docs</span>
+    </div>
+    <div class="header-center">
+        <div class="search-box">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search docs..." id="searchInput" onkeyup="handleSearch(event)">
+            <span class="search-shortcut">⌘K</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <a href="https://github.com/pinexai" class="header-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+        </a>
+    </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="project-switcher" id="projectSwitcher">
+        <button class="project-btn" onclick="toggleProjectDropdown()">
+            <div class="project-btn-icon" id="activeProjectIcon" style="background: rgba(0,232,157,0.12);">🔥</div>
+            <span id="activeProjectName">tokenspy</span>
+            <span class="project-btn-arrow">▾</span>
+        </button>
+        <div class="project-dropdown">
+            <button class="project-option active" data-project="tokenspy" onclick="switchProject('tokenspy')">
+                <span style="font-size:13px;">🔥</span> tokenspy
+            </button>
+            <button class="project-option" data-project="agent-memory" onclick="switchProject('agent-memory')">
+                <span style="font-size:13px;">🧠</span> agent-memory
+            </button>
+        </div>
+    </div>
+
+    <!-- tokenspy Nav -->
+    <nav id="nav-tokenspy">
+        <div class="nav-group">
+            <div class="nav-group-label">Getting Started</div>
+            <button class="nav-item active" onclick="showSection('tokenspy','overview')"><span class="nav-dot"></span> Overview</button>
+            <button class="nav-item" onclick="showSection('tokenspy','installation')"><span class="nav-dot"></span> Installation</button>
+            <button class="nav-item" onclick="showSection('tokenspy','quickstart')"><span class="nav-dot"></span> Quick Start</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Features</div>
+            <button class="nav-item" onclick="showSection('tokenspy','cost-profiling')"><span class="nav-dot"></span> Cost Profiling</button>
+            <button class="nav-item" onclick="showSection('tokenspy','tracing')"><span class="nav-dot"></span> Structured Tracing</button>
+            <button class="nav-item" onclick="showSection('tokenspy','evaluations')"><span class="nav-dot"></span> Evaluations</button>
+            <button class="nav-item" onclick="showSection('tokenspy','prompts')"><span class="nav-dot"></span> Prompt Versioning</button>
+            <button class="nav-item" onclick="showSection('tokenspy','dashboard')"><span class="nav-dot"></span> Live Dashboard</button>
+            <button class="nav-item" onclick="showSection('tokenspy','otel')"><span class="nav-dot"></span> OpenTelemetry</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Integrations</div>
+            <button class="nav-item" onclick="showSection('tokenspy','ts-langchain')"><span class="nav-dot"></span> LangChain</button>
+            <button class="nav-item" onclick="showSection('tokenspy','ci')"><span class="nav-dot"></span> GitHub Actions</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Reference</div>
+            <button class="nav-item" onclick="showSection('tokenspy','cli')"><span class="nav-dot"></span> CLI</button>
+            <button class="nav-item" onclick="showSection('tokenspy','pricing-table')"><span class="nav-dot"></span> Pricing Table</button>
+            <button class="nav-item" onclick="showSection('tokenspy','providers')"><span class="nav-dot"></span> Supported Providers</button>
+        </div>
+    </nav>
+
+    <!-- agent-memory Nav -->
+    <nav id="nav-agent-memory" style="display:none;">
+        <div class="nav-group">
+            <div class="nav-group-label">Getting Started</div>
+            <button class="nav-item active" onclick="showSection('agent-memory','am-overview')"><span class="nav-dot"></span> Overview</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-installation')"><span class="nav-dot"></span> Installation</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-quickstart')"><span class="nav-dot"></span> Quick Start</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Core Concepts</div>
+            <button class="nav-item" onclick="showSection('agent-memory','am-architecture')"><span class="nav-dot"></span> Memory Architecture</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-api')"><span class="nav-dot"></span> API Reference</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-async')"><span class="nav-dot"></span> Async Support</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Integrations</div>
+            <button class="nav-item" onclick="showSection('agent-memory','am-anthropic')"><span class="nav-dot"></span> Anthropic</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-openai')"><span class="nav-dot"></span> OpenAI</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-langchain')"><span class="nav-dot"></span> LangChain</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-crewai')"><span class="nav-dot"></span> CrewAI</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-autogen')"><span class="nav-dot"></span> AutoGen</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-mcp')"><span class="nav-dot"></span> MCP / Claude Code</button>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">Advanced</div>
+            <button class="nav-item" onclick="showSection('agent-memory','am-qdrant')"><span class="nav-dot"></span> Qdrant Backend</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-export')"><span class="nav-dot"></span> Export / Import</button>
+            <button class="nav-item" onclick="showSection('agent-memory','am-cli')"><span class="nav-dot"></span> CLI</button>
+        </div>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+    <div class="nav-group">
+        <button class="nav-item" onclick="window.open('https://github.com/pinexai','_blank')"><span class="nav-dot"></span> GitHub Org</button>
+        <button class="nav-item" onclick="window.open('https://pypi.org/user/pinexai/','_blank')"><span class="nav-dot"></span> PyPI</button>
+    </div>
+</aside>
+
+<div class="layout">
+    <main class="main">
+        <div class="content-wrapper" id="contentArea">
+
+            <!-- ══════ TOKENSPY ══════ -->
+            <div class="doc-page" id="page-tokenspy">
+
+                <div class="doc-section" id="section-overview">
+                    <h1 class="doc-title">tokenspy 🔥</h1>
+                    <p class="doc-subtitle">cProfile for LLMs — find which function is burning your AI budget. Flame graphs, structured tracing, evaluations, prompt versioning, and a live dashboard.</p>
+                    <div class="doc-meta"><span class="doc-version">v0.2.0</span><span class="doc-meta-item">Python 3.10+</span><span class="doc-meta-item">MIT</span><span class="doc-meta-item"><a href="https://github.com/pinexai/tokenspy" target="_blank">GitHub →</a></span></div>
+                    <div class="callout callout--tip"><span class="callout-icon">💡</span><div class="callout-content"><strong>One-line install:</strong> <code>pip install tokenspy</code> — zero dependencies.</div></div>
+                    <h2>The Problem</h2>
+                    <p>You get an OpenAI invoice — <strong>$800 this month</strong>. You have no idea which function caused it. Langfuse and Braintrust force you to reroute traffic through their cloud proxy.</p>
+                    <p><strong>tokenspy is your local alternative.</strong> One line. Runs on your machine. Forever free.</p>
+                    <h2>What's in v0.2.0</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card"><div class="feature-card-title">🔥 Cost Flame Graphs</div><div class="feature-card-desc">See exactly which function is burning your budget.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🔍 Structured Tracing</div><div class="feature-card-desc">Full trace + span tree with inputs, outputs, tokens.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">📊 Evaluations</div><div class="feature-card-desc">Run LLM functions against golden test sets.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">📝 Prompt Versioning</div><div class="feature-card-desc">Track every version. Diff when costs spike.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">📺 Live Dashboard</div><div class="feature-card-desc">Web UI with cost charts, trace explorer.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">📡 OpenTelemetry</div><div class="feature-card-desc">Export to Grafana, Jaeger, Datadog.</div></div>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="section-installation" style="display:none;">
+                    <h1 class="doc-title">Installation</h1>
+                    <p class="doc-subtitle">Choose the install variant that matches your stack.</p>
+                    <div class="doc-meta"><span class="doc-version">v0.2.0</span></div>
+                    <pre><code>pip install tokenspy              # zero deps
+pip install tokenspy[openai]
+pip install tokenspy[anthropic]
+pip install tokenspy[langchain]
+pip install tokenspy[otel]        # OpenTelemetry
+pip install tokenspy[server]      # Live dashboard
+pip install tokenspy[all]</code></pre>
+                    <div class="callout callout--info"><span class="callout-icon">ℹ️</span><div class="callout-content">The core package has <strong>zero dependencies</strong>. Extras only install the corresponding SDK.</div></div>
+                </div>
+
+                <div class="doc-section" id="section-quickstart" style="display:none;">
+                    <h1 class="doc-title">Quick Start</h1>
+                    <p class="doc-subtitle">Get cost visibility in under 60 seconds.</p>
+                    <div class="doc-meta"><span class="doc-version">v0.2.0</span></div>
+                    <h2>Minimal — 1 Line</h2>
+                    <pre><code>import tokenspy
+
+@tokenspy.profile
+def my_function():
+    return openai.chat.completions.create(model="gpt-4o", messages=[...])
+
+my_function()
+tokenspy.report()</code></pre>
+                    <h2>Full Setup</h2>
+                    <pre><code>import tokenspy
+
+tokenspy.init(persist=True, track_git=True, otel_endpoint="http://localhost:4317")
+
+with tokenspy.trace("my_pipeline", input={"query": q}) as t:
+    with tokenspy.span("retrieve") as s:
+        docs = fetch(q)
+        s.update(output=docs)
+    with tokenspy.span("generate", span_type="llm") as s:
+        answer = llm_call(docs)
+    t.update(output=answer)
+
+t.score("quality", 0.9)
+tokenspy.report()</code></pre>
+                    <div class="callout callout--tip"><span class="callout-icon">💡</span><div class="callout-content">Run <code>tokenspy serve</code> to open the dashboard at <strong>localhost:7234</strong>.</div></div>
+                </div>
+
+                <div class="doc-section" id="section-cost-profiling" style="display:none;">
+                    <h1 class="doc-title">Cost Profiling</h1>
+                    <p class="doc-subtitle">See which function is burning your AI budget.</p>
+                    <pre><code>@tokenspy.profile
+def run_pipeline(query):
+    docs = fetch_and_summarize(query)
+    entities = extract_entities(docs)
+    return generate_report(entities)
+
+run_pipeline("Analyze Q3 earnings")
+tokenspy.report()</code></pre>
+                    <h2>Budget Alerts</h2>
+                    <pre><code>@tokenspy.profile(budget_usd=0.10)
+def my_agent(query): ...
+
+@tokenspy.profile(budget_usd=0.10, on_exceeded="raise")
+def strict_agent(query): ...</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-tracing" style="display:none;">
+                    <h1 class="doc-title">Structured Tracing</h1>
+                    <p class="doc-subtitle">See exactly what happens inside every LLM call.</p>
+                    <p>LLM calls made inside a span are <strong>automatically linked</strong> — no manual wiring.</p>
+                    <pre><code>with tokenspy.trace("research", input={"query": "climate change"}) as t:
+    with tokenspy.span("retrieve", span_type="retrieval") as s:
+        docs = vector_store.search("climate change", top_k=5)
+        s.update(output={"n_docs": len(docs)})
+    with tokenspy.span("summarize", span_type="llm") as s:
+        response = openai.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": f"Summarize: {docs}"}]
+        )
+    t.score("relevance", 0.92, scorer="human")</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-evaluations" style="display:none;">
+                    <h1 class="doc-title">Evaluations &amp; Datasets</h1>
+                    <p class="doc-subtitle">Run LLM functions against golden test sets and track quality.</p>
+                    <pre><code>ds = tokenspy.dataset("qa-golden")
+ds.add(input={"question": "Capital of France?"}, expected_output="Paris")
+
+exp = tokenspy.experiment(
+    "gpt4o-mini-baseline",
+    dataset="qa-golden",
+    fn=answer_question,
+    scorers=[scorers.exact_match, scorers.contains],
+)
+results = exp.run()
+results.summary()</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-prompts" style="display:none;">
+                    <h1 class="doc-title">Prompt Versioning</h1>
+                    <p class="doc-subtitle">Track every version. Know which caused a cost spike.</p>
+                    <pre><code>p = tokenspy.prompts.push("summarizer",
+    "Summarize in {{style}} style, max {{max_words}} words:\n\n{{text}}")
+
+compiled = p.compile(style="concise", max_words=100, text="...")
+tokenspy.prompts.set_production("summarizer", version=2)</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-dashboard" style="display:none;">
+                    <h1 class="doc-title">Live Dashboard</h1>
+                    <p class="doc-subtitle">Web UI for costs, traces, evaluations, and prompts.</p>
+                    <pre><code>tokenspy serve                           # localhost:7234
+tokenspy serve --port 8080 --db custom.db</code></pre>
+                    <p>5 tabs: <strong>Overview</strong>, <strong>Traces</strong>, <strong>Evaluations</strong>, <strong>Prompts</strong>, <strong>Settings</strong>.</p>
+                    <pre><code>pip install tokenspy[server]</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-otel" style="display:none;">
+                    <h1 class="doc-title">OpenTelemetry Export</h1>
+                    <p class="doc-subtitle">Send data to Grafana, Jaeger, Datadog, or any OTEL backend.</p>
+                    <pre><code>tokenspy.init(persist=True, otel_endpoint="http://localhost:4317", otel_service_name="my-app")</code></pre>
+                    <pre><code>pip install tokenspy[otel]</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-ts-langchain" style="display:none;">
+                    <h1 class="doc-title">LangChain Integration</h1>
+                    <p class="doc-subtitle">Use tokenspy with LangChain and LangGraph.</p>
+                    <pre><code>from tokenspy.integrations.langchain import TokenspyCallbackHandler
+
+chain.invoke(prompt, config={"callbacks": [TokenspyCallbackHandler()]})</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-ci" style="display:none;">
+                    <h1 class="doc-title">GitHub Actions — Cost Diff</h1>
+                    <p class="doc-subtitle">Catch cost regressions in CI before they ship.</p>
+                    <pre><code>from tokenspy.ci import annotate_cost_diff
+annotate_cost_diff("current_run.db", "baseline.db")</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-cli" style="display:none;">
+                    <h1 class="doc-title">CLI Reference</h1>
+                    <pre><code>tokenspy history [--limit 50]
+tokenspy report [--format html]
+tokenspy compare --commit abc123 --commit def456
+tokenspy serve [--port 8080] [--no-open]</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-pricing-table" style="display:none;">
+                    <h1 class="doc-title">Built-in Pricing Table</h1>
+                    <p class="doc-subtitle">30+ models, updated March 2026. No network calls.</p>
+                    <table class="doc-table">
+                        <tr><th>Model</th><th>Input $/1M</th><th>Output $/1M</th></tr>
+                        <tr><td><code>claude-opus-4-6</code></td><td>$15.00</td><td>$75.00</td></tr>
+                        <tr><td><code>claude-sonnet-4-6</code></td><td>$3.00</td><td>$15.00</td></tr>
+                        <tr><td><code>gpt-4o</code></td><td>$2.50</td><td>$10.00</td></tr>
+                        <tr><td><code>gpt-4o-mini</code></td><td>$0.15</td><td>$0.60</td></tr>
+                        <tr><td><code>gemini-1.5-pro</code></td><td>$1.25</td><td>$5.00</td></tr>
+                    </table>
+                    <p><a href="https://github.com/pinexai/tokenspy/blob/main/tokenspy/pricing.py" target="_blank">Full table on GitHub →</a></p>
+                </div>
+
+                <div class="doc-section" id="section-providers" style="display:none;">
+                    <h1 class="doc-title">Supported Providers</h1>
+                    <table class="doc-table">
+                        <tr><th>Provider</th><th>Package</th><th>Auto-detected</th></tr>
+                        <tr><td><strong>OpenAI</strong></td><td><code>openai>=1.0</code></td><td>chat.completions.create</td></tr>
+                        <tr><td><strong>Anthropic</strong></td><td><code>anthropic>=0.30</code></td><td>messages.create</td></tr>
+                        <tr><td><strong>Google</strong></td><td><code>google-generativeai>=0.7</code></td><td>generate_content</td></tr>
+                        <tr><td><strong>LangChain</strong></td><td><code>langchain-core>=0.2</code></td><td>Callback handler</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══════ AGENT-MEMORY ══════ -->
+            <div class="doc-page" id="page-agent-memory" style="display:none;">
+
+                <div class="doc-section" id="section-am-overview">
+                    <h1 class="doc-title">agent-memory 🧠</h1>
+                    <p class="doc-subtitle">Production-ready persistent memory for AI agents. Works with LangChain, CrewAI, AutoGen, and raw SDKs — in 3 lines.</p>
+                    <div class="doc-meta"><span class="doc-version">v0.1.2</span><span class="doc-meta-item">Python 3.10+</span><span class="doc-meta-item">MIT</span><span class="doc-meta-item"><a href="https://github.com/pinexai/agent-memory" target="_blank">GitHub →</a></span></div>
+                    <div class="callout callout--tip"><span class="callout-icon">💡</span><div class="callout-content"><strong>Install:</strong> <code>pip install agentcortex</code></div></div>
+                    <h2>The Problem</h2>
+                    <p>Every time your agent starts a new session, it starts from zero. This isn't an AI limitation — it's a <strong>missing infrastructure layer</strong>.</p>
+                    <h2>Features</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card"><div class="feature-card-title">🧠 Three-Tier Memory</div><div class="feature-card-desc">Working, episodic, and semantic — mirrors human memory.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🔌 Framework-Agnostic</div><div class="feature-card-desc">LangChain, CrewAI, AutoGen, or raw SDKs.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🗜️ Auto-Compression</div><div class="feature-card-desc">Context window never overflows.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🔗 MCP Server</div><div class="feature-card-desc">Permanent memory for Claude Code / Cursor.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🧹 Deduplication</div><div class="feature-card-desc">Stops storing near-identical facts.</div></div>
+                        <div class="feature-card"><div class="feature-card-title">🏠 Local-First</div><div class="feature-card-desc">No cloud, no signup, no API keys.</div></div>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="section-am-installation" style="display:none;">
+                    <h1 class="doc-title">Installation</h1>
+                    <div class="doc-meta"><span class="doc-version">v0.1.2</span></div>
+                    <pre><code>pip install agentcortex                     # minimal
+pip install "agentcortex[chromadb,local]"   # semantic search (recommended)
+pip install "agentcortex[all]"              # everything
+pip install "agentcortex[mcp]"              # MCP server
+pip install "agentcortex[qdrant]"           # production backend
+pip install "agentcortex[autogen]"          # AutoGen adapter</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-quickstart" style="display:none;">
+                    <h1 class="doc-title">Quick Start</h1>
+                    <p class="doc-subtitle">Add persistent memory in 3 lines.</p>
+                    <pre><code>from agentmemory import MemoryStore
+
+memory = MemoryStore(agent_id="my-agent")
+memory.remember("User's name is Alice, building fraud detection")
+
+context = memory.get_context("What do we know about the user?")</code></pre>
+                    <p>Memory persists to disk. It's there next session, and the one after that.</p>
+                </div>
+
+                <div class="doc-section" id="section-am-architecture" style="display:none;">
+                    <h1 class="doc-title">Memory Architecture</h1>
+                    <p class="doc-subtitle">Three-tier system mirroring human memory.</p>
+                    <p><strong>Working Memory</strong> — current conversation. Auto-compresses when nearing the token limit.</p>
+                    <p><strong>Episodic Memory</strong> — recent interactions in SQLite. Evicts low-importance entries.</p>
+                    <p><strong>Semantic Memory</strong> — long-term facts as vector embeddings (ChromaDB). Retrieved by meaning.</p>
+                    <pre><code>┌──────────────────────────────────────────┐
+│               MemoryStore                │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ │
+│  │ Working  │ │ Episodic │ │ Semantic │ │
+│  │  (RAM)   │ │ (SQLite) │ │ (Chroma) │ │
+│  └──────────┘ └──────────┘ └──────────┘ │
+└──────────────────────────────────────────┘</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-api" style="display:none;">
+                    <h1 class="doc-title">API Reference</h1>
+                    <pre><code>MemoryStore(
+    agent_id: str,
+    persist_dir: str = "~/.agentmemory",
+    max_working_tokens: int = 4096,
+    semantic_backend: str = "chromadb",
+    embedding_provider: str = "sentence-transformers",
+    llm_provider: str = "anthropic",
+    enable_dedup: bool = True,
+    auto_compress: bool = True,
+)</code></pre>
+                    <table class="doc-table">
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>remember(content, importance=5)</code></td><td>Store a fact in episodic + semantic</td></tr>
+                        <tr><td><code>recall(query, n=5)</code></td><td>Top-n relevant memories by meaning</td></tr>
+                        <tr><td><code>get_context(query, max_tokens=500)</code></td><td>Formatted context for system prompt</td></tr>
+                        <tr><td><code>add_message(role, content)</code></td><td>Track conversation turn</td></tr>
+                        <tr><td><code>get_messages()</code></td><td>Working memory as [{role, content}]</td></tr>
+                        <tr><td><code>compress()</code></td><td>Manual compression trigger</td></tr>
+                        <tr><td><code>stats()</code></td><td>Usage across all tiers</td></tr>
+                        <tr><td><code>clear(tiers=None)</code></td><td>Clear specific or all tiers</td></tr>
+                    </table>
+                </div>
+
+                <div class="doc-section" id="section-am-async" style="display:none;">
+                    <h1 class="doc-title">Async Support</h1>
+                    <pre><code>from agentmemory import AsyncMemoryStore
+
+async with AsyncMemoryStore(agent_id="my-agent") as memory:
+    await memory.remember("User prefers Python", importance=7)
+    results = await memory.recall("tech stack")
+    context = await memory.get_context("What do we know?")</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-anthropic" style="display:none;">
+                    <h1 class="doc-title">Anthropic Integration</h1>
+                    <pre><code>from agentmemory import MemoryStore
+import anthropic
+
+memory = MemoryStore(agent_id="my-agent")
+client = anthropic.Anthropic()
+
+def chat(user_input: str) -> str:
+    memory.add_message("user", user_input)
+    response = client.messages.create(
+        model="claude-sonnet-4-6", max_tokens=1024,
+        system=f"You are helpful.\n\n{memory.get_context(user_input)}",
+        messages=memory.get_messages(),
+    )
+    reply = response.content[0].text
+    memory.add_message("assistant", reply)
+    return reply</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-openai" style="display:none;">
+                    <h1 class="doc-title">OpenAI Integration</h1>
+                    <pre><code>from agentmemory.adapters.openai import MemoryOpenAI
+
+client = MemoryOpenAI(agent_id="my-agent")
+client.chat("Hi, I'm Alice")
+# Next session...
+client.chat("What's my name?")  # → "Your name is Alice." ✅</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-langchain" style="display:none;">
+                    <h1 class="doc-title">LangChain Integration</h1>
+                    <pre><code>from agentmemory import MemoryStore
+from agentmemory.adapters.langchain import MemoryHistory, inject_memory_context
+from langchain_anthropic import ChatAnthropic
+
+memory = MemoryStore(agent_id="my-agent")
+history = MemoryHistory(memory_store=memory)
+llm = ChatAnthropic(model="claude-sonnet-4-6")
+
+history.add_user_message("Hello, I'm Alice")
+messages = inject_memory_context(history.messages, memory, query="Alice")
+response = llm.invoke(messages)</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-crewai" style="display:none;">
+                    <h1 class="doc-title">CrewAI Integration</h1>
+                    <pre><code>from agentmemory.adapters.crewai import CrewMemoryCallback, get_memory_context_for_agent
+
+memory = MemoryStore(agent_id="research-crew")
+agent = Agent(
+    role="Researcher",
+    backstory=get_memory_context_for_agent(memory, "Researcher") + "\nExpert.",
+)
+task = Task(description="Research AI memory", agent=agent,
+    callback=CrewMemoryCallback(memory))</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-autogen" style="display:none;">
+                    <h1 class="doc-title">AutoGen Integration</h1>
+                    <pre><code>from agentmemory.adapters.autogen import AutoGenMemoryHook, get_autogen_memory_context
+
+context = get_autogen_memory_context(memory, role="Research Assistant")
+assistant = autogen.AssistantAgent(name="researcher",
+    system_message=context + "\nYou are a helpful assistant.")
+
+hook = AutoGenMemoryHook(memory, importance=6)
+assistant.register_reply(trigger=autogen.ConversableAgent,
+    reply_func=hook.on_agent_reply, position=0)</code></pre>
+                    <p>Install: <code>pip install "agentcortex[autogen]"</code></p>
+                </div>
+
+                <div class="doc-section" id="section-am-mcp" style="display:none;">
+                    <h1 class="doc-title">MCP / Claude Code</h1>
+                    <p class="doc-subtitle">Give your AI coding assistant permanent memory.</p>
+                    <div class="callout callout--tip"><span class="callout-icon">🚀</span><div class="callout-content"><strong>2-minute setup.</strong> Claude remembers architecture decisions, bug fixes, and preferences.</div></div>
+                    <h2>Step 1 — Install</h2>
+                    <pre><code>pip install "agentcortex[mcp]"</code></pre>
+                    <h2>Step 2 — Create <code>.mcp.json</code></h2>
+                    <pre><code>{
+  "mcpServers": {
+    "agentmemory": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "agentmemory.mcp_server"],
+      "env": { "AGENTMEMORY_AGENT_ID": "your-project-name" }
+    }
+  }
+}</code></pre>
+                    <h2>Step 3</h2>
+                    <p>Open Claude Code → run <code>/mcp</code> → see <code>agentmemory</code> with 5 tools. Done.</p>
+                    <table class="doc-table">
+                        <tr><th>Tool</th><th>Description</th></tr>
+                        <tr><td><code>get_context</code></td><td>Returns relevant memories for current task</td></tr>
+                        <tr><td><code>remember</code></td><td>Store a fact (importance 1–10)</td></tr>
+                        <tr><td><code>recall</code></td><td>Semantic search over all memories</td></tr>
+                        <tr><td><code>memory_stats</code></td><td>Memory counts across tiers</td></tr>
+                        <tr><td><code>clear_memory</code></td><td>Reset memories</td></tr>
+                    </table>
+                </div>
+
+                <div class="doc-section" id="section-am-qdrant" style="display:none;">
+                    <h1 class="doc-title">Qdrant Backend</h1>
+                    <p class="doc-subtitle">Scale to millions of vectors.</p>
+                    <pre><code>memory = MemoryStore(
+    agent_id="my-agent",
+    semantic_backend="qdrant",
+    qdrant_url="http://localhost:6333",
+)</code></pre>
+                    <p>Install: <code>pip install "agentcortex[qdrant]"</code></p>
+                </div>
+
+                <div class="doc-section" id="section-am-export" style="display:none;">
+                    <h1 class="doc-title">Export / Import</h1>
+                    <pre><code>memory.export_json("backup.json")
+
+new_memory = MemoryStore(agent_id="new-agent")
+new_memory.import_json("backup.json")
+new_memory.import_json("backup.json", merge=True)</code></pre>
+                </div>
+
+                <div class="doc-section" id="section-am-cli" style="display:none;">
+                    <h1 class="doc-title">Memory CLI</h1>
+                    <pre><code>agentmemory inspect --agent-id my-project
+agentmemory export --agent-id my-project --output memories.json
+agentmemory import memories.json --agent-id new-project --merge</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+let activeProject = 'tokenspy';
+
+function toggleProjectDropdown() {
+    document.getElementById('projectSwitcher').classList.toggle('open');
+}
+
+function switchProject(project) {
+    activeProject = project;
+    document.getElementById('projectSwitcher').classList.remove('open');
+    const icons = { 'tokenspy': '🔥', 'agent-memory': '🧠' };
+    const colors = { 'tokenspy': 'rgba(0,232,157,0.12)', 'agent-memory': 'rgba(77,142,255,0.12)' };
+    document.getElementById('activeProjectIcon').textContent = icons[project];
+    document.getElementById('activeProjectIcon').style.background = colors[project];
+    document.getElementById('activeProjectName').textContent = project;
+
+    document.querySelectorAll('.project-option').forEach(o => o.classList.toggle('active', o.dataset.project === project));
+    document.querySelectorAll('nav[id^="nav-"]').forEach(n => n.style.display = 'none');
+    document.getElementById('nav-' + project).style.display = 'block';
+    document.querySelectorAll('.doc-page').forEach(p => p.style.display = 'none');
+    document.getElementById('page-' + project).style.display = 'block';
+
+    const firstNav = document.querySelector('#nav-' + project + ' .nav-item');
+    if (firstNav) firstNav.click();
+}
+
+function showSection(project, sectionId) {
+    const page = document.getElementById('page-' + project);
+    page.querySelectorAll('.doc-section').forEach(s => s.style.display = 'none');
+    const target = document.getElementById('section-' + sectionId);
+    if (target) { target.style.display = 'block'; target.style.animation = 'none'; target.offsetHeight; target.style.animation = 'fadeIn 0.4s ease'; }
+    document.getElementById('nav-' + project).querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+function handleSearch(e) {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('#nav-' + activeProject + ' .nav-item').forEach(item => {
+        item.style.background = q && item.textContent.toLowerCase().includes(q) ? 'rgba(0,232,157,0.06)' : '';
+    });
+}
+
+document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+});
+document.addEventListener('click', e => {
+    if (!document.getElementById('projectSwitcher').contains(e.target)) document.getElementById('projectSwitcher').classList.remove('open');
+});
+</script>
+</body>
+</html>
