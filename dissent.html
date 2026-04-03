@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dissent — 15 AI executives debate any idea | PinexAI</title>
+  <meta name="description" content="Dissent: drop any idea and watch 15 AI personas — CEO, CTO, CFO, CISO, Legal, the Client, and more — debate it live. Bring your own API key. No backend. No signup. MIT licensed." />
+  <meta name="keywords" content="Dissent, AI debate, LLM debate, org simulator, CEO CTO CFO AI, pinexai, bring your own key, Groq, Anthropic, OpenAI" />
+  <meta name="author" content="Pinaki Mishra — PinexAI" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://pinexai.dev/dissent.html" />
+  <meta property="og:title" content="Dissent — 15 AI executives debate any idea | PinexAI" />
+  <meta property="og:description" content="Drop any idea. Watch 15 AI personas debate it live — CEO, CTO, CFO, CISO, Legal, the Client, and 9 more. Bring your own API key. No backend, no signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pinexai.dev/dissent.html" />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/23132843?v=4" />
+  <meta property="og:site_name" content="PinexAI" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@pinexai" />
+  <meta name="twitter:title" content="Dissent — 15 AI executives debate any idea | PinexAI" />
+  <meta name="twitter:description" content="Drop any idea. Watch 15 AI personas debate it live. Bring your own API key." />
+  <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/23132843?v=4" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2300e89d'/><stop offset='1' stop-color='%234d8eff'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='url(%23g)'/><text x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='700' font-size='14' fill='%230a0a0f'>D</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN SYSTEM — CSS CUSTOM PROPERTIES
+       ============================================================ */
+    :root {
+      /* Room colors */
+      --room-bg: #0d0f16;
+      --room-wall: #12141c;
+      --room-floor: #1a1d26;
+      --room-table: #2d2418;
+      --room-table-shine: rgba(255,255,255,0.04);
+      --room-window: #0d1a30;
+
+      /* UI surfaces */
+      --bg: #08090c;
+      --surface-1: #0f1117;
+      --surface-2: #14161f;
+      --surface-3: #1c1f2b;
+      --border: rgba(255,255,255,0.06);
+      --border-2: rgba(255,255,255,0.1);
+
+      /* Text */
+      --text: #e8e9f0;
+      --text-muted: #5a5d70;
+      --text-dim: #2e3042;
+
+      /* Fonts */
+      --font-ui: 'Space Grotesk', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+
+      /* Word-stream timing */
+      --speed-fast:   30ms;
+      --speed-normal: 60ms;
+      --speed-slow:  100ms;
+      --transition: 0.3s ease;
+
+      /* Agent colors */
+      --CEO:     #ff6b35;
+      --CTO:     #4d9fff;
+      --CFO:     #3ddc84;
+      --COO:     #b57aff;
+      --CISO:    #ff4d6d;
+      --PM:      #c77dff;
+      --ENG:     #48cae4;
+      --UX:      #f72585;
+      --DEVOPS:  #2ec4b6;
+      --SEC:     #ff9f1c;
+      --QA:      #a8dadc;
+      --SALES:   #ef233c;
+      --LEGAL:   #8ecae6;
+      --SUPPORT: #52b788;
+      --CLIENT:  #b7e4c7;
+    }
+
+    /* ============================================================
+       RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ============================================================
+       TOPBAR
+       ============================================================ */
+    #topbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
+      height: 48px;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    #topbar .logo {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    #topbar .logo span { color: var(--CEO); }
+    #topic-display {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #phase-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      background: var(--surface-3);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: var(--transition);
+    }
+    #phase-badge.active { background: rgba(77,159,255,0.15); color: var(--CTO); border-color: rgba(77,159,255,0.3); }
+    #settings-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    #settings-btn:hover { border-color: var(--border-2); color: var(--text); }
+
+    /* ============================================================
+       MAIN LAYOUT
+       ============================================================ */
+    #main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       LEFT — OFFICE ROOM
+       ============================================================ */
+    #room-panel {
+      width: 65%;
+      position: relative;
+      overflow: hidden;
+      background: var(--room-bg);
+      flex-shrink: 0;
+    }
+
+    /* The room container — everything inside is absolutely positioned */
+    #room {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Back wall */
+    #wall {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 52%;
+      background: linear-gradient(180deg, #0c0e15 0%, #12141c 60%, #1a1c28 100%);
+    }
+
+    /* Window on the back wall — blue glow */
+    #window {
+      position: absolute;
+      top: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28%;
+      height: 28%;
+      background: linear-gradient(180deg, #0d1a30 0%, #0a1525 100%);
+      border: 1px solid rgba(77,159,255,0.15);
+      border-radius: 2px;
+      box-shadow:
+        0 0 40px rgba(77,159,255,0.12),
+        0 0 80px rgba(77,159,255,0.06),
+        inset 0 0 20px rgba(77,159,255,0.08);
+      overflow: hidden;
+    }
+    /* Blind strips */
+    #window::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 8px,
+        rgba(0,0,0,0.25) 8px,
+        rgba(0,0,0,0.25) 10px
+      );
+    }
+    /* City lights glow behind blinds */
+    #window::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40%;
+      background: linear-gradient(180deg, transparent, rgba(77,159,255,0.08));
+    }
+
+    /* Perspective floor */
+    #floor {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 52%;
+      background: linear-gradient(180deg, #1e2130 0%, #252836 100%);
+      overflow: hidden;
+    }
+    /* Floor perspective grid lines */
+    #floor::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent calc(10% - 1px),
+          rgba(255,255,255,0.025) calc(10% - 1px),
+          rgba(255,255,255,0.025) 10%
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent,
+          transparent calc(12% - 1px),
+          rgba(255,255,255,0.025) calc(12% - 1px),
+          rgba(255,255,255,0.025) 12%
+        );
+    }
+
+    /* Conference table — ellipse */
+    #table {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -42%);
+      width: 50%;
+      height: 22%;
+      background: radial-gradient(ellipse at 50% 30%, #3a2e1e 0%, #2d2418 50%, #221a10 100%);
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.6),
+        0 2px 8px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    /* Table shine highlight */
+    #table::after {
+      content: '';
+      position: absolute;
+      top: 8%;
+      left: 20%;
+      width: 60%;
+      height: 30%;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.05) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* SVG overlay for agreement lines */
+    #agreement-svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Atmosphere overlay — changes based on debate state */
+    #atmosphere {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      transition: background 1s ease;
+      z-index: 3;
+    }
+    #atmosphere.idle       { background: transparent; }
+    #atmosphere.debating   { background: rgba(0,0,20,0.08); }
+    #atmosphere.heated     { background: rgba(30,0,0,0.12); }
+    #atmosphere.deadlock   { background: rgba(60,0,0,0.18); }
+    #atmosphere.solution   { background: rgba(0,20,10,0.12); }
+    #atmosphere.verdict    { background: rgba(0,0,0,0.38); }
+
+    /* Atmosphere label */
+    #atm-label {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      z-index: 4;
+      transition: var(--transition);
+    }
+
+    /* ============================================================
+       AGENT AVATARS
+       ============================================================ */
+    .avatar {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: default;
+      transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+      z-index: 6;
+      /* Offset so position is the avatar center */
+      transform: translate(-50%, -50%);
+      opacity: 0.55; /* idle state — dimmed */
+    }
+    .avatar.large  { width: 42px; height: 42px; font-size: 8px; }
+    .avatar.medium { width: 36px; height: 36px; font-size: 7px; }
+    .avatar.small  { width: 28px; height: 28px; font-size: 6px; }
+
+    /* Idle state — all muted */
+    .avatar .avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.35);
+    }
+
+    /* Speaking state */
+    .avatar.speaking {
+      opacity: 1 !important;
+      transform: translate(-50%, calc(-50% - 5px)) scale(1.12);
+      animation: speakPulse 1.8s ease-in-out infinite;
+      z-index: 8;
+    }
+    /* Others dim when someone is speaking */
+    .avatar.dimmed {
+      opacity: 0.2;
+    }
+
+    /* Reacting (mentioned or disagreed with) */
+    .avatar.reacting {
+      animation: reactPulse 0.6s ease;
+    }
+
+    @keyframes speakPulse {
+      0%, 100% { filter: brightness(1); }
+      50%       { filter: brightness(1.25); }
+    }
+    @keyframes reactPulse {
+      0%, 100% { border-color: var(--agent-color); }
+      50% { box-shadow: 0 0 12px rgba(239,35,60,0.6); }
+    }
+    @keyframes rippleOut {
+      0%   { width: 38px; height: 38px; opacity: 0.7; }
+      100% { width: 90px; height: 90px; opacity: 0; }
+    }
+
+    /* Ripple element appended dynamically */
+    .avatar-ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      pointer-events: none;
+      animation: rippleOut 1.2s ease-out forwards;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+    }
+
+    /* Speech bubble */
+    .speech-bubble {
+      position: absolute;
+      background: rgba(20,22,32,0.95);
+      border: 0.5px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: var(--text);
+      white-space: nowrap;
+      max-width: 160px;
+      pointer-events: none;
+      z-index: 9;
+      animation: bubbleFade 3s ease forwards;
+      transform: translateX(-50%);
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(20,22,32,0.95);
+      border-bottom: none;
+    }
+    .speech-bubble.bubble-below::after {
+      bottom: auto;
+      top: -6px;
+      border-top: none;
+      border-bottom: 6px solid rgba(20,22,32,0.95);
+    }
+    @keyframes bubbleFade {
+      0%   { opacity: 0; }
+      10%  { opacity: 1; }
+      70%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* ============================================================
+       RIGHT — CHAT PANEL
+       ============================================================ */
+    #chat-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      overflow: hidden;
+    }
+    #chat-header {
+      padding: 10px 16px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-track { background: transparent; }
+    #chat-messages::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
+
+    /* Individual message */
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .msg-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .msg-pip {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 6px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .msg-role {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .msg-stance {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .stance-for      { background: rgba(22,163,74,0.2);  color: #4ade80; border: 1px solid rgba(22,163,74,0.3); }
+    .stance-against  { background: rgba(220,38,38,0.2);  color: #f87171; border: 1px solid rgba(220,38,38,0.3); }
+    .stance-mixed    { background: rgba(217,119,6,0.2);  color: #fbbf24; border: 1px solid rgba(217,119,6,0.3); }
+    .stance-blocking { background: rgba(220,38,38,0.25); color: #f87171; border: 1.5px solid rgba(220,38,38,0.6); font-weight: 700; }
+    .stance-solution { background: rgba(79,70,229,0.2);  color: #818cf8; border: 1px solid rgba(79,70,229,0.3); }
+    .stance-mediating{ background: rgba(124,58,237,0.2); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+    .msg-emotion {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .msg-time {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    /* Reply-to reference */
+    .msg-reply {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding-left: 8px;
+      border-left: 2px solid var(--surface-3);
+    }
+    /* Message body */
+    .msg-body {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      border-left: 3px solid;
+      font-size: 13px;
+      line-height: 1.55;
+      min-height: 20px;
+    }
+    /* System message (phase transitions) */
+    .msg.system {
+      align-items: center;
+    }
+    .msg.system .msg-body {
+      background: transparent;
+      border: none;
+      border-left: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 4px 0;
+    }
+    /* Error message */
+    .msg.error .msg-body {
+      background: rgba(220,38,38,0.1);
+      border-color: rgba(220,38,38,0.4);
+      color: #f87171;
+    }
+
+    /* Keyword highlight inside messages */
+    .kw-tech    { font-weight: 600; }
+    .kw-emotion { font-weight: 700; }
+
+    /* ============================================================
+       BOTTOM INPUT BAR
+       ============================================================ */
+    #input-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--surface-1);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #topic-input {
+      flex: 1;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    #topic-input::placeholder { color: var(--text-muted); }
+    #topic-input:focus { border-color: var(--border-2); }
+    #topic-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Provider / model selectors */
+    .bar-select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .bar-select:hover { border-color: var(--border-2); }
+    #provider-select { min-width: 110px; }
+    #model-select    { min-width: 180px; }
+
+    /* Debate button */
+    #debate-btn {
+      background: var(--CEO);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 20px;
+      cursor: pointer;
+      transition: filter var(--transition), transform 0.1s;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+    }
+    #debate-btn:hover:not(:disabled) { filter: brightness(1.15); }
+    #debate-btn:active:not(:disabled) { transform: scale(0.97); }
+    #debate-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ============================================================
+       SETTINGS PANEL (slide-in from right)
+       ============================================================ */
+    #settings-panel {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: 320px;
+      background: var(--surface-1);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.35s ease;
+      overflow: hidden;
+    }
+    #settings-panel.open { transform: translateX(0); }
+    #settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 99;
+      display: none;
+    }
+    #settings-overlay.open { display: block; }
+    #settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #settings-header h2 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    #settings-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 4px;
+    }
+    #settings-close:hover { color: var(--text); }
+    #settings-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    #settings-body::-webkit-scrollbar { width: 4px; }
+    #settings-body::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
+
+    .settings-section h3 {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .settings-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .settings-row label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .settings-input {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      padding: 7px 10px;
+      outline: none;
+      width: 100%;
+      transition: border-color var(--transition);
+    }
+    .settings-input:focus { border-color: var(--border-2); }
+    .settings-select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      padding: 7px 10px;
+      width: 100%;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* API key row with show/hide */
+    .key-row {
+      display: flex;
+      gap: 6px;
+    }
+    .key-row .settings-input { flex: 1; }
+    .key-toggle {
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0 10px;
+      flex-shrink: 0;
+    }
+
+    /* Speed buttons */
+    .speed-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .speed-btn {
+      flex: 1;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      padding: 7px 0;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .speed-btn.active {
+      background: rgba(77,159,255,0.15);
+      border-color: rgba(77,159,255,0.35);
+      color: var(--CTO);
+    }
+
+    /* Toggle switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .toggle-row label { font-size: 12px; color: var(--text); }
+    .toggle {
+      width: 32px; height: 18px;
+      background: var(--surface-3);
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      transition: background var(--transition);
+      flex-shrink: 0;
+    }
+    .toggle.on { background: rgba(77,159,255,0.4); border-color: rgba(77,159,255,0.5); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 12px; height: 12px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: transform var(--transition), background var(--transition);
+    }
+    .toggle.on::after { transform: translateX(14px); background: var(--CTO); }
+
+    /* Persona toggle grid */
+    #persona-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    .persona-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      background: var(--surface-2);
+      transition: var(--transition);
+      font-size: 11px;
+    }
+    .persona-toggle .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .persona-toggle.off { opacity: 0.4; }
+
+    /* Test connection button */
+    #test-btn {
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      padding: 8px 14px;
+      width: 100%;
+      transition: var(--transition);
+      text-align: center;
+    }
+    #test-btn:hover { border-color: var(--border-2); }
+    #test-result { font-size: 11px; margin-top: 4px; }
+    #test-result.ok  { color: var(--CFO); }
+    #test-result.err { color: var(--CISO); }
+
+    /* History items */
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 11px;
+      gap: 8px;
+    }
+    .history-item .h-topic {
+      flex: 1;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .history-item .h-type {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      padding: 2px 5px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .h-type-consensus      { background: rgba(22,163,74,0.2); color: #4ade80; }
+    .h-type-conditional    { background: rgba(217,119,6,0.2);  color: #fbbf24; }
+    .h-type-deadlock_broken{ background: rgba(79,70,229,0.2);  color: #818cf8; }
+    .h-type-hard_no        { background: rgba(220,38,38,0.2);  color: #f87171; }
+
+    /* ============================================================
+       ONBOARDING OVERLAY
+       ============================================================ */
+    #onboarding {
+      position: fixed;
+      inset: 0;
+      background: rgba(8,9,12,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    #onboarding.hidden { opacity: 0; pointer-events: none; }
+    .onboard-box {
+      background: var(--surface-1);
+      border: 1px solid var(--border-2);
+      border-radius: 16px;
+      padding: 36px 40px;
+      width: 420px;
+      max-width: 90vw;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .onboard-logo {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .onboard-logo span { color: var(--CEO); }
+    .onboard-tagline {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .onboard-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .onboard-note::before {
+      content: '🔒';
+      font-size: 12px;
+    }
+    .onboard-btn {
+      background: var(--CEO);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 0;
+      text-align: center;
+      transition: filter var(--transition);
+    }
+    .onboard-btn:hover { filter: brightness(1.12); }
+    .onboard-link {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .onboard-link a { color: var(--CTO); text-decoration: none; }
+    .onboard-link a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       VERDICT CARD
+       ============================================================ */
+    #verdict-panel {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 150;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #verdict-panel.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    #verdict-bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+    }
+    #verdict-card {
+      position: relative;
+      background: var(--surface-1);
+      border-radius: 14px;
+      border: 1px solid var(--border-2);
+      padding: 28px 32px;
+      width: 540px;
+      max-width: 92vw;
+      max-height: 88vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: translateY(60px);
+      transition: transform 0.6s ease;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    #verdict-panel.visible #verdict-card { transform: translateY(0); }
+    #verdict-card::-webkit-scrollbar { width: 4px; }
+    #verdict-card::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
+
+    .verdict-ending-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .verdict-consensus      { background: rgba(22,163,74,0.2);  color: #4ade80; border: 1px solid rgba(22,163,74,0.35); }
+    .verdict-conditional    { background: rgba(217,119,6,0.2);  color: #fbbf24; border: 1px solid rgba(217,119,6,0.35); }
+    .verdict-deadlock_broken{ background: rgba(79,70,229,0.2);  color: #818cf8; border: 1px solid rgba(79,70,229,0.35); }
+    .verdict-hard_no        { background: rgba(220,38,38,0.2);  color: #f87171; border: 1px solid rgba(220,38,38,0.35); }
+
+    .verdict-headline {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .verdict-divider {
+      height: 1px;
+      background: var(--border);
+    }
+    .verdict-summary {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .verdict-section-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .verdict-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .verdict-step:last-child { border-bottom: none; }
+    .verdict-step-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .verdict-step-action {
+      flex: 1;
+      font-size: 13px;
+    }
+    .verdict-step-owner {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: var(--surface-3);
+      flex-shrink: 0;
+    }
+    .verdict-step-timeline {
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .verdict-risks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .verdict-risk {
+      font-size: 11px;
+      padding: 3px 8px;
+      background: rgba(255,75,79,0.1);
+      color: #ff9f9f;
+      border: 1px solid rgba(255,75,79,0.2);
+      border-radius: 4px;
+    }
+    /* Vote tally */
+    .verdict-votes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .verdict-vote {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .verdict-vote.vfor     { border-color: rgba(22,163,74,0.4); color: #4ade80; background: rgba(22,163,74,0.1); }
+    .verdict-vote.vagainst { border-color: rgba(220,38,38,0.4); color: #f87171; background: rgba(220,38,38,0.1); }
+    .verdict-vote.vmixed   { border-color: rgba(217,119,6,0.4);  color: #fbbf24; background: rgba(217,119,6,0.1); }
+
+    /* Verdict action buttons */
+    .verdict-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .verdict-btn {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+    .verdict-btn:hover { border-color: var(--border-2); background: var(--surface-3); }
+    .verdict-btn.primary { background: var(--CEO); border-color: var(--CEO); color: #fff; }
+    .verdict-btn.primary:hover { filter: brightness(1.1); }
+
+    /* Dissenter note */
+    .verdict-dissenter {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 10px 14px;
+      background: var(--surface-2);
+      border-radius: 6px;
+      border-left: 3px solid var(--CISO);
+    }
+
+    /* ============================================================
+       MOBILE RESPONSIVE
+       ============================================================ */
+    @media (max-width: 768px) {
+      #room-panel { display: none; }
+      #chat-panel { width: 100%; }
+      /* Agent strip at top */
+      #agent-strip {
+        display: flex !important;
+        overflow-x: auto;
+        padding: 8px 12px;
+        gap: 8px;
+        background: var(--surface-1);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      #agent-strip::-webkit-scrollbar { display: none; }
+      .strip-avatar {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid;
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-mono);
+        font-size: 6px;
+        font-weight: 700;
+        flex-shrink: 0;
+        opacity: 0.5;
+        transition: opacity 0.3s, transform 0.3s;
+      }
+      .strip-avatar.speaking { opacity: 1; transform: scale(1.15); }
+    }
+    @media (min-width: 769px) {
+      #agent-strip { display: none; }
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 1.5px solid var(--border-2);
+      border-top-color: var(--CTO);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     TOPBAR
+     ============================================================ -->
+<header id="topbar">
+  <a href="https://pinexai.dev" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:0.08em;flex-shrink:0;padding:4px 8px;border:1px solid var(--border);border-radius:4px;transition:color 0.2s,border-color 0.2s;" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border-2)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">← pinexai.dev</a>
+  <div class="logo"><span>D</span>ISSENT</div>
+  <div id="topic-display">Drop a topic below and start the debate</div>
+  <div id="phase-badge">IDLE</div>
+  <button id="settings-btn" title="Settings">⚙</button>
+</header>
+
+<!-- ============================================================
+     MAIN LAYOUT
+     ============================================================ -->
+<div id="main">
+
+  <!-- LEFT: OFFICE ROOM -->
+  <div id="room-panel">
+    <div id="room">
+
+      <!-- Background layers -->
+      <div id="wall"></div>
+      <div id="window"></div>
+      <div id="floor"></div>
+
+      <!-- Conference table -->
+      <div id="table"></div>
+
+      <!-- Atmosphere state overlay -->
+      <div id="atmosphere" class="idle"></div>
+      <div id="atm-label"></div>
+
+      <!-- SVG layer for agreement lines -->
+      <svg id="agreement-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+
+      <!-- AGENT AVATARS
+           Positions from SEAT_POSITIONS in blueprint.
+           transform: translate(-50%,-50%) centers them on the % coordinate.
+      -->
+
+      <!-- C-Suite / head of table -->
+      <div class="avatar large" id="av-CEO"
+           style="top:16%;left:50%;border-color:var(--CEO);color:var(--CEO);"
+           data-role="CEO">
+        <div class="avatar-inner">CEO</div>
+      </div>
+      <div class="avatar small" id="av-COO"
+           style="top:8%;left:35%;border-color:var(--COO);color:var(--COO);"
+           data-role="COO">
+        <div class="avatar-inner">COO</div>
+      </div>
+      <div class="avatar small" id="av-SUPPORT"
+           style="top:8%;left:62%;border-color:var(--SUPPORT);color:var(--SUPPORT);"
+           data-role="SUPPORT">
+        <div class="avatar-inner">SUP</div>
+      </div>
+
+      <!-- Left side -->
+      <div class="avatar medium" id="av-CISO"
+           style="top:38%;left:12%;border-color:var(--CISO);color:var(--CISO);"
+           data-role="CISO">
+        <div class="avatar-inner">CISO</div>
+      </div>
+      <div class="avatar medium" id="av-PM"
+           style="top:42%;left:28%;border-color:var(--PM);color:var(--PM);"
+           data-role="PM">
+        <div class="avatar-inner">PM</div>
+      </div>
+
+      <!-- Right side -->
+      <div class="avatar medium" id="av-ENG"
+           style="top:42%;left:68%;border-color:var(--ENG);color:var(--ENG);"
+           data-role="ENG">
+        <div class="avatar-inner">ENG</div>
+      </div>
+      <div class="avatar medium" id="av-SALES"
+           style="top:38%;left:84%;border-color:var(--SALES);color:var(--SALES);"
+           data-role="SALES">
+        <div class="avatar-inner">SLS</div>
+      </div>
+
+      <!-- Front-left -->
+      <div class="avatar medium" id="av-UX"
+           style="top:62%;left:20%;border-color:var(--UX);color:var(--UX);"
+           data-role="UX">
+        <div class="avatar-inner">UX</div>
+      </div>
+      <div class="avatar medium" id="av-QA"
+           style="top:66%;left:36%;border-color:var(--QA);color:var(--QA);"
+           data-role="QA">
+        <div class="avatar-inner">QA</div>
+      </div>
+
+      <!-- Front-right -->
+      <div class="avatar medium" id="av-DEVOPS"
+           style="top:66%;left:58%;border-color:var(--DEVOPS);color:var(--DEVOPS);"
+           data-role="DEVOPS">
+        <div class="avatar-inner">OPS</div>
+      </div>
+      <div class="avatar medium" id="av-LEGAL"
+           style="top:62%;left:74%;border-color:var(--LEGAL);color:var(--LEGAL);"
+           data-role="LEGAL">
+        <div class="avatar-inner">LGL</div>
+      </div>
+
+      <!-- Observer seats — walls -->
+      <div class="avatar large" id="av-CTO"
+           style="top:28%;left:6%;border-color:var(--CTO);color:var(--CTO);"
+           data-role="CTO">
+        <div class="avatar-inner">CTO</div>
+      </div>
+      <div class="avatar large" id="av-CFO"
+           style="top:28%;left:90%;border-color:var(--CFO);color:var(--CFO);"
+           data-role="CFO">
+        <div class="avatar-inner">CFO</div>
+      </div>
+      <div class="avatar small" id="av-SEC"
+           style="top:50%;left:4%;border-color:var(--SEC);color:var(--SEC);"
+           data-role="SEC">
+        <div class="avatar-inner">SEC</div>
+      </div>
+      <div class="avatar small" id="av-CLIENT"
+           style="top:50%;left:92%;border-color:var(--CLIENT);color:var(--CLIENT);"
+           data-role="CLIENT">
+        <div class="avatar-inner">CLI</div>
+      </div>
+
+    </div><!-- /#room -->
+  </div><!-- /#room-panel -->
+
+  <!-- RIGHT: CHAT PANEL -->
+  <div id="chat-panel">
+    <!-- Mobile agent strip (hidden on desktop) -->
+    <div id="agent-strip"></div>
+
+    <div id="chat-header">Live Transcript</div>
+    <div id="chat-messages">
+      <!-- Messages rendered by JS -->
+    </div>
+  </div>
+
+</div><!-- /#main -->
+
+<!-- ============================================================
+     BOTTOM INPUT BAR
+     ============================================================ -->
+<div id="input-bar">
+  <input id="topic-input" type="text"
+    placeholder="Drop any idea: 'Should we rewrite in Go?' 'Raise prices 20%?'" />
+  <select id="provider-select" class="bar-select" title="Provider"></select>
+  <select id="model-select" class="bar-select" title="Model"></select>
+  <button id="debate-btn">DEBATE</button>
+</div>
+
+<!-- ============================================================
+     SETTINGS PANEL
+     ============================================================ -->
+<div id="settings-overlay"></div>
+<div id="settings-panel">
+  <div id="settings-header">
+    <h2>Settings</h2>
+    <button id="settings-close">✕</button>
+  </div>
+  <div id="settings-body">
+
+    <!-- PROVIDER & MODEL -->
+    <div class="settings-section">
+      <h3>Provider &amp; Model</h3>
+      <div class="settings-row">
+        <label>Provider</label>
+        <select id="s-provider" class="settings-select"></select>
+      </div>
+      <div class="settings-row">
+        <label>Model</label>
+        <select id="s-model" class="settings-select"></select>
+      </div>
+      <div class="settings-row" id="s-custom-model-row" style="display:none;">
+        <label>Custom Model</label>
+        <input id="s-custom-model" class="settings-input" type="text" placeholder="model-name" />
+      </div>
+      <div class="settings-row">
+        <label>API Key</label>
+        <div class="key-row">
+          <input id="s-apikey" class="settings-input" type="password" placeholder="Paste your key…" />
+          <button class="key-toggle" id="s-key-toggle" title="Show/hide key">👁</button>
+        </div>
+      </div>
+      <div class="settings-row" id="s-baseurl-row" style="display:none;">
+        <label>Base URL</label>
+        <input id="s-baseurl" class="settings-input" type="text" placeholder="http://localhost:11434/v1" />
+      </div>
+      <button id="test-btn">Test Connection</button>
+      <div id="test-result"></div>
+      <div class="onboard-link" id="s-key-docs-link" style="margin-top:6px;"></div>
+    </div>
+
+    <!-- DEBATE SETTINGS -->
+    <div class="settings-section">
+      <h3>Debate Settings</h3>
+      <div class="settings-row">
+        <label>Word Speed</label>
+        <div class="speed-btns">
+          <button class="speed-btn" data-speed="slow">Slow</button>
+          <button class="speed-btn active" data-speed="normal">Normal</button>
+          <button class="speed-btn" data-speed="fast">Fast</button>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <label>Auto-scroll</label>
+        <div class="toggle on" id="t-autoscroll"></div>
+      </div>
+      <div class="toggle-row">
+        <label>Speech bubbles</label>
+        <div class="toggle on" id="t-bubbles"></div>
+      </div>
+      <div class="settings-row" style="margin-top:8px;">
+        <label>Active Personas</label>
+        <div id="persona-grid"></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="settings-section">
+      <h3>Debate History</h3>
+      <div id="history-list"></div>
+      <button class="speed-btn" id="clear-history-btn" style="width:100%;margin-top:4px;">Clear History</button>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="settings-section">
+      <h3>About</h3>
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.6;">
+        <b style="color:var(--text)">Dissent</b> v1.0.0<br/>
+        MIT License · Open Source<br/>
+        <a href="https://github.com/yourusername/dissent" style="color:var(--CTO);text-decoration:none;" target="_blank">GitHub ↗</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     ONBOARDING OVERLAY
+     ============================================================ -->
+<div id="onboarding">
+  <div class="onboard-box">
+    <div class="onboard-logo"><span>D</span>ISSENT</div>
+    <div class="onboard-tagline">
+      15 AI executives debate your idea.<br/>
+      CEO. CTO. CISO. Legal. The Client. And 10 more.
+    </div>
+    <div class="onboard-note">Nothing stored on any server. Your key lives in your browser only.</div>
+    <div class="settings-row">
+      <label style="font-size:12px;color:var(--text-muted);">Provider</label>
+      <select id="ob-provider" class="settings-select"></select>
+    </div>
+    <div class="settings-row">
+      <label style="font-size:12px;color:var(--text-muted);">API Key</label>
+      <input id="ob-apikey" class="settings-input" type="password" placeholder="Paste your API key…" />
+    </div>
+    <div class="onboard-link" id="ob-key-link"></div>
+    <button class="onboard-btn" id="ob-start-btn">Start Debating →</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     VERDICT CARD PANEL
+     ============================================================ -->
+<div id="verdict-panel">
+  <div id="verdict-bg"></div>
+  <div id="verdict-card">
+    <!-- Filled dynamically by showVerdict() -->
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+'use strict';
+
+/* ============================================================
+   PROVIDERS CONFIG
+   All 6 supported LLM providers with their full spec.
+   ============================================================ */
+const PROVIDERS = {
+  groq: {
+    name: 'Groq',
+    baseURL: 'https://api.groq.com/openai/v1',
+    format: 'openai',
+    requiresKey: true,
+    keyPlaceholder: 'gsk_…',
+    keyDocs: 'https://console.groq.com/keys',
+    freeNote: 'Free tier available',
+    models: [
+      { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B (recommended)' },
+      { id: 'llama-3.1-8b-instant',    label: 'Llama 3.1 8B (ultra fast)' },
+      { id: 'mixtral-8x7b-32768',      label: 'Mixtral 8x7B' },
+    ],
+  },
+  anthropic: {
+    name: 'Anthropic',
+    baseURL: 'https://api.anthropic.com',
+    format: 'anthropic',
+    requiresKey: true,
+    keyPlaceholder: 'sk-ant-…',
+    keyDocs: 'https://console.anthropic.com/keys',
+    models: [
+      { id: 'claude-sonnet-4-5', label: 'Claude Sonnet 4.5 (recommended)' },
+      { id: 'claude-opus-4-5',   label: 'Claude Opus 4.5 (best quality)' },
+      { id: 'claude-haiku-4-5',  label: 'Claude Haiku 4.5 (fastest)' },
+    ],
+  },
+  openai: {
+    name: 'OpenAI',
+    baseURL: 'https://api.openai.com/v1',
+    format: 'openai',
+    requiresKey: true,
+    keyPlaceholder: 'sk-…',
+    keyDocs: 'https://platform.openai.com/api-keys',
+    models: [
+      { id: 'gpt-4o',       label: 'GPT-4o (recommended)' },
+      { id: 'gpt-4o-mini',  label: 'GPT-4o Mini (faster, cheaper)' },
+      { id: 'gpt-4-turbo',  label: 'GPT-4 Turbo' },
+    ],
+  },
+  ollama: {
+    name: 'Ollama (Local)',
+    baseURL: 'http://localhost:11434/v1',
+    format: 'openai',
+    requiresKey: false,
+    localNote: 'Runs fully local — no data leaves your machine',
+    allowCustomModel: true,
+    models: [
+      { id: 'llama3.3',  label: 'Llama 3.3 (recommended)' },
+      { id: 'mistral',   label: 'Mistral' },
+      { id: 'deepseek-r1', label: 'DeepSeek R1' },
+    ],
+  },
+  openrouter: {
+    name: 'OpenRouter',
+    baseURL: 'https://openrouter.ai/api/v1',
+    format: 'openai',
+    requiresKey: true,
+    keyPlaceholder: 'sk-or-…',
+    keyDocs: 'https://openrouter.ai/keys',
+    freeNote: '200+ models with one key',
+    allowCustomModel: true,
+    models: [
+      { id: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B' },
+      { id: 'google/gemini-2.0-flash-exp:free',   label: 'Gemini 2.0 Flash (free)' },
+      { id: 'deepseek/deepseek-r1',               label: 'DeepSeek R1' },
+      { id: 'anthropic/claude-sonnet-4-5',        label: 'Claude Sonnet 4.5' },
+      { id: 'openai/gpt-4o',                      label: 'GPT-4o' },
+    ],
+  },
+  custom: {
+    name: 'Custom Endpoint',
+    baseURL: '',
+    format: 'openai',
+    requiresKey: true,
+    keyPlaceholder: 'your-api-key',
+    allowCustomURL: true,
+    allowCustomModel: true,
+    models: [],
+  },
+};
+
+/* ============================================================
+   PERSONAS
+   Full system prompts for all 15 roles.
+   ============================================================ */
+const PERSONAS = {
+  CEO: `You are the CEO in a live org debate. Think: strategic vision, market timing, competitive positioning, right bets, ROI. You ask hard questions about whether this is the RIGHT priority right now, not just whether it's possible. You sometimes side with Sales when revenue is at stake, sometimes with CTO when risk is material. You speak in short decisive sentences. When someone makes a point you disagree with, call it out directly by referencing what they said. When you see a clear path forward, name it. 3 sentences max. No bullet points. No hedging.`,
+
+  CTO: `You are the CTO in a live org debate. Think: technical feasibility, team capacity, architecture, tech debt, realistic timelines. You get genuinely frustrated when people underestimate complexity. You WILL push back hard on unrealistic timelines with specifics — name the actual constraint. But you also want things to ship — if there's a real technical path, describe it concisely. When ENG or SEC make valid points, agree explicitly and build on them. 3 sentences max. Be blunt and technical. Occasionally sardonic.`,
+
+  CFO: `You are the CFO in a live org debate. Everything is numbers: cost, ROI, unit economics, budget impact, opportunity cost, payback period. You are not anti-innovation — you are anti-undisciplined spending. When you agree to something, name your exact financial condition. When you disagree, ask for the specific financial model. Push back hard on anyone hand-waving costs. Always end with a specific financial question or condition. 3 sentences max.`,
+
+  COO: `You are the COO in a live org debate. Think: execution, ownership, process, cross-team dependencies, operational readiness. You are the one asking 'who owns this end-to-end?' and 'what does week-one rollout actually look like?' You get frustrated when people agree on ideas without agreeing on execution. When a workable plan emerges, help structure it with specifics. 3 sentences max. Practical and direct.`,
+
+  CISO: `You are the CISO in a live org debate. Security and compliance are your domain and your non-negotiables. You will hard-block anything that creates material security risk — but you are a problem-solver, not an obstructionist. When others rush past security, interrupt with specifics. When you see a path that's both secure and workable, champion it explicitly. 3 sentences max. Firm, specific, occasionally alarming when the risk is real.`,
+
+  PM: `You are the Product Manager in a live org debate. You are trying to hold the room together while also fighting hard for good product decisions. Think: scope, user value, success metrics, ruthless prioritization, preventing scope creep. When debate gets chaotic, find the middle ground. When someone proposes something unscoped, call it out with 'who signs off on scope?' When consensus is near, help name it concretely. 3 sentences max. Diplomatic but firm.`,
+
+  ENG: `You are the Senior Engineer in a live org debate. You have been burned by optimistic estimates and will not pretend timelines are realistic when they are not. Think: code quality, API design, architecture decisions, real cost of cutting corners. When CTO is right, back them up strongly with technical specifics. When you see a workable technical path emerging, describe it concisely. Slightly sardonic when given unrealistic deadlines. 3 sentences max.`,
+
+  UX: `You are the UX Designer in a live org debate. You fight for the user experience — always. You have done the research and know what users struggle with. When others ignore UX concerns, push back by citing specific user research findings ('in our last round of testing, users couldn't find...'). When a decision will hurt experience, say exactly why. When there's a design solution, propose it. 3 sentences max. Passively-aggressive when dismissed.`,
+
+  DEVOPS: `You are the DevOps engineer in a live org debate. You think about infrastructure, CI/CD, monitoring, on-call burden, and what breaks at 3am. Every new surface is a new failure domain you will own. When people promise launch dates without thinking about infra, ask specifically what the runbook looks like. When you see a viable infra path, describe it. 3 sentences max. Tired but sharp. You have been on-call when things went wrong and you will not forget it.`,
+
+  SEC: `You are the Security Engineer in a live org debate. You think about threat models, auth vulnerabilities, data exposure, API attack surface, and compliance requirements at the code level. You work alongside CISO but you get into the technical specifics they don't. When auth or data architecture is insecure, say exactly why and what the specific risk is. When there is a secure technical path, name it. 3 sentences max. Precise and uncompromising on real risks.`,
+
+  QA: `You are the QA Lead in a live org debate. You have seen what happens when products ship undertested — the 1-star reviews, the trust erosion, the frantic hotfixes. You fight for enough testing time every single time. When a timeline leaves no room for QA, say so with specifics about what goes untested. When you see a realistic testing plan, help shape it. 3 sentences max. Battle-hardened, calm, certain about what cuts corners look like.`,
+
+  SALES: `You are the Sales Lead in a live org debate. You speak from real customer conversations — you know which deals are being lost and why, and you will name specific consequences. When the org is too internally focused and ignoring market reality, say it clearly. You understand technical concerns — you are not dismissing them — but every day of delay has a real pipeline cost and you will quantify it. 3 sentences max. Urgent and grounded in real data.`,
+
+  LEGAL: `You are Legal/Compliance in a live org debate. You identify the legal prerequisites that must be satisfied before anything ships — GDPR, app store compliance, data handling, liability exposure, contractual obligations. You do not kill ideas. You define the legal checklist and what must happen before you can approve. When someone is about to walk into a legal landmine, stop them with specifics. When you see a compliant path, describe it. 3 sentences max. Precise and non-negotiable on the specifics.`,
+
+  SUPPORT: `You are the Customer Support Lead in a live org debate. You speak from the front lines — you know what confuses users, what breaks their trust, and what creates ticket floods. When a launch plan has no documentation, training, or escalation path, say so. When you see what would make a launch actually supportable, describe it specifically. 3 sentences max. Grounded and slightly exhausted. You have cleaned up after launches that didn't think about support.`,
+
+  CLIENT: `You are the Client — an actual paying customer — in a live org debate. You do not care about internal politics or technical debates. You care about whether this solves your specific problem, whether it works reliably, and whether it is easy to use. You will say when you are close to switching to a competitor. You will also say when something sounds genuinely useful to you. Speak from personal frustrations and needs, not abstract requirements. 2 sentences max. Human and direct.`,
+};
+
+/* Agent color map — maps role key to CSS variable value */
+const AGENT_COLORS = {
+  CEO: '#ff6b35', CTO: '#4d9fff', CFO: '#3ddc84', COO: '#b57aff',
+  CISO: '#ff4d6d', PM: '#c77dff', ENG: '#48cae4', UX: '#f72585',
+  DEVOPS: '#2ec4b6', SEC: '#ff9f1c', QA: '#a8dadc', SALES: '#ef233c',
+  LEGAL: '#8ecae6', SUPPORT: '#52b788', CLIENT: '#b7e4c7',
+};
+
+/* Pip labels shown inside each avatar */
+const AGENT_PIPS = {
+  CEO:'CEO', CTO:'CTO', CFO:'CFO', COO:'COO', CISO:'CISO',
+  PM:'PM', ENG:'ENG', UX:'UX', DEVOPS:'OPS', SEC:'SEC',
+  QA:'QA', SALES:'SLS', LEGAL:'LGL', SUPPORT:'SUP', CLIENT:'CLI',
+};
+
+/* All role keys */
+const ALL_ROLES = Object.keys(PERSONAS);
+
+/* ============================================================
+   SETTINGS — localStorage read/write
+   ============================================================ */
+const SETTINGS_KEY = 'dissent_settings';
+const HISTORY_KEY  = 'dissent_history';
+
+/* Default settings applied on first launch */
+const DEFAULT_SETTINGS = {
+  provider: 'groq',
+  model: 'llama-3.3-70b-versatile',
+  apiKey: '',
+  baseURL: 'https://api.groq.com/openai/v1',
+  format: 'openai',
+  customModel: '',
+  speed: 'normal',
+  activePersonas: [...ALL_ROLES],
+  autoScroll: true,
+  speechBubbles: true,
+};
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return { ...DEFAULT_SETTINGS };
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+  } catch { return { ...DEFAULT_SETTINGS }; }
+}
+
+function saveSettings(s) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveHistory(h) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0, 5)));
+}
+
+/* ============================================================
+   DEBATE STATE
+   ============================================================ */
+let STATE = {
+  topic: '',
+  messages: [],       // { role, text, stance, timestamp, emotion }
+  stances: {},        // { role: 'for'|'against'|'mixed' }
+  blockers: [],       // roles with hard blocks
+  blockerConditions: {},
+  repeatedArgs: {},   // { 'CTO-SALES': count }
+  phase: 'idle',
+  tensionLevel: 0,
+  consensusReached: false,
+  deadlockRoles: [],
+  msgCount: 0,
+  settings: {},
+  isDebating: false,
+  abortFlag: false,
+};
+
+let currentSettings = loadSettings();
+
+/* ============================================================
+   STREAMING ADAPTERS
+   ============================================================ */
+
+/**
+ * Stream tokens from Anthropic's SSE API.
+ * Uses the Anthropic messages endpoint with streaming.
+ */
+async function* streamAnthropic(systemPrompt, userPrompt, settings) {
+  const response = await fetch(`${settings.baseURL}/v1/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': settings.apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-calls': 'true',
+    },
+    body: JSON.stringify({
+      model: settings.model,
+      max_tokens: 180,
+      stream: true,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `Anthropic error ${response.status}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    for (const line of decoder.decode(value).split('\n')) {
+      if (!line.startsWith('data: ')) continue;
+      try {
+        const data = JSON.parse(line.slice(6));
+        if (data.type === 'content_block_delta' && data.delta?.text) {
+          yield data.delta.text;
+        }
+      } catch { /* ignore parse errors in SSE stream */ }
+    }
+  }
+}
+
+/**
+ * Stream tokens from any OpenAI-compatible SSE API.
+ * Covers: OpenAI, Groq, Ollama, OpenRouter, Custom.
+ */
+async function* streamOpenAI(systemPrompt, userPrompt, settings) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (settings.apiKey) headers['Authorization'] = `Bearer ${settings.apiKey}`;
+  // OpenRouter needs referer metadata
+  if (settings.provider === 'openrouter') {
+    headers['HTTP-Referer'] = 'https://github.com/yourusername/dissent';
+    headers['X-Title'] = 'Dissent';
+  }
+
+  const response = await fetch(`${settings.baseURL}/chat/completions`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: settings.model,
+      max_tokens: 180,
+      stream: true,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userPrompt },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `API error ${response.status}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    for (const line of decoder.decode(value).split('\n')) {
+      if (!line.startsWith('data: ') || line.includes('[DONE]')) continue;
+      try {
+        const data = JSON.parse(line.slice(6));
+        const text = data.choices?.[0]?.delta?.content;
+        if (text) yield text;
+      } catch { /* ignore parse errors in SSE stream */ }
+    }
+  }
+}
+
+/**
+ * Unified stream router — picks the right adapter based on provider format.
+ */
+async function* streamAgent(systemPrompt, userPrompt, settings) {
+  if (settings.format === 'anthropic') {
+    yield* streamAnthropic(systemPrompt, userPrompt, settings);
+  } else {
+    yield* streamOpenAI(systemPrompt, userPrompt, settings);
+  }
+}
+
+/**
+ * Collect a full response from streamAgent without streaming to UI.
+ * Used for the verdict JSON generation.
+ */
+async function collectResponse(systemPrompt, userPrompt, settings) {
+  let full = '';
+  for await (const chunk of streamAgent(systemPrompt, userPrompt, settings)) {
+    full += chunk;
+  }
+  return full;
+}
+
+/* ============================================================
+   STANCE & DEBATE ANALYSIS
+   ============================================================ */
+const FOR_SIGNALS     = ['support','agree','let\'s do','we should','good idea','excited','i\'m for','makes sense','right call','absolutely','behind this','great opportunity','move forward','let\'s go','yes','approve','endorse','in favor'];
+const AGAINST_SIGNALS = ['against','won\'t work','too risky','not ready','too fast','dangerous','can\'t','unrealistic','bad idea','not enough time','block','concerned','worried','serious problem','will fail','disagree','oppose','no way','reject'];
+const BLOCKER_SIGNALS = ['hard block','cannot approve','will not approve','must not ship','non-negotiable','legal requirement','compliance violation','security risk','block this'];
+
+/**
+ * Detect stance from raw message text.
+ * Returns 'for' | 'against' | 'mixed' | 'blocker'
+ */
+function detectStance(text) {
+  const t = text.toLowerCase();
+  const isBlocker  = BLOCKER_SIGNALS.some(s => t.includes(s));
+  if (isBlocker) return 'blocker';
+  const forScore     = FOR_SIGNALS.filter(s => t.includes(s)).length;
+  const againstScore = AGAINST_SIGNALS.filter(s => t.includes(s)).length;
+  if (forScore > againstScore + 1) return 'for';
+  if (againstScore > forScore + 1)  return 'against';
+  if (forScore > 0 && againstScore > 0) return 'mixed';
+  if (forScore > 0)     return 'for';
+  if (againstScore > 0) return 'against';
+  return 'mixed';
+}
+
+/**
+ * Detect emotion tag from text and speaking context.
+ * Returns a label string or null.
+ */
+function detectEmotion(text, prevRole) {
+  const t = text.toLowerCase();
+  if (BLOCKER_SIGNALS.some(s => t.includes(s))) return 'BLOCKING';
+  if (['what if','propose','suggest','i suggest','what about','how about'].some(s => t.includes(s))) return 'PROPOSING';
+  if (['agree','exactly right','well said','good point','absolutely right'].some(s => t.includes(s))) return 'AGREEING';
+  if (['wrong','incorrect','no,','that\'s not','pushback','disagree'].some(s => t.includes(s))) return 'PUSHING BACK';
+  if (['urgent','immediately','can\'t wait','right now','losing deals'].some(s => t.includes(s))) return 'URGENT';
+  return null;
+}
+
+/**
+ * Check if ≥70% of active personas share a stance.
+ */
+function checkConsensus(stances) {
+  const vals = Object.values(stances);
+  if (vals.length < 3) return false;
+  const forCount = vals.filter(v => v === 'for').length;
+  const againstCount = vals.filter(v => v === 'against').length;
+  return (forCount / vals.length >= 0.7) || (againstCount / vals.length >= 0.7);
+}
+
+/**
+ * Detect A→B→A→B deadlock pattern in last 6 messages.
+ * Returns [roleA, roleB] or null.
+ */
+function checkDeadlock(messages) {
+  const last6 = messages.slice(-6);
+  if (last6.length < 4) return null;
+  // Check if the pattern alternates between exactly 2 roles
+  const roles = last6.map(m => m.role);
+  if (new Set(roles).size === 2) {
+    const [a, b] = [...new Set(roles)];
+    const expected = [a,b,a,b,a,b].slice(0, last6.length);
+    if (roles.every((r, i) => r === expected[i])) return [a, b];
+    const expectedAlt = [b,a,b,a,b,a].slice(0, last6.length);
+    if (roles.every((r, i) => r === expectedAlt[i])) return [b, a];
+  }
+  return null;
+}
+
+/**
+ * Calculate tension level 0–100.
+ */
+function calcTension(stances, blockers, repeatedArgs) {
+  const vals = Object.values(stances);
+  const againstCount = vals.filter(v => v === 'against' || v === 'blocker').length;
+  const base = vals.length > 0 ? (againstCount / vals.length) * 60 : 0;
+  const blockerBonus = Math.min(blockers.length * 15, 30);
+  const deadlockBonus = Object.values(repeatedArgs).some(c => c >= 2) ? 10 : 0;
+  return Math.min(Math.round(base + blockerBonus + deadlockBonus), 100);
+}
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+
+/** Format a timestamp as HH:MM:SS */
+function fmtTime(d = new Date()) {
+  return [d.getHours(), d.getMinutes(), d.getSeconds()]
+    .map(n => String(n).padStart(2, '0')).join(':');
+}
+
+/** Get the effective model name from settings (custom or selected) */
+function getActiveModel(s) {
+  if (s.customModel && s.customModel.trim()) return s.customModel.trim();
+  return s.model;
+}
+
+/* ============================================================
+   ROOM ANIMATION HELPERS
+   ============================================================ */
+
+/** Set the speaking avatar — glows it, dims others */
+function setSpeak(role) {
+  document.querySelectorAll('.avatar').forEach(el => {
+    el.classList.remove('speaking', 'dimmed');
+    if (el.dataset.role !== role) el.classList.add('dimmed');
+  });
+  const av = document.getElementById(`av-${role}`);
+  if (!av) return;
+  av.classList.remove('dimmed');
+  av.classList.add('speaking');
+  // Ripple effect
+  spawnRipple(av);
+  // Mobile strip
+  document.querySelectorAll('.strip-avatar').forEach(el => {
+    el.classList.remove('speaking');
+    if (el.dataset.role === role) el.classList.add('speaking');
+  });
+}
+
+/** Remove speaking state — restore all avatars to idle */
+function clearSpeak() {
+  document.querySelectorAll('.avatar').forEach(el => {
+    el.classList.remove('speaking', 'dimmed');
+  });
+  document.querySelectorAll('.strip-avatar').forEach(el => el.classList.remove('speaking'));
+}
+
+/** Spawn a ripple ring at the avatar's position */
+function spawnRipple(avatarEl) {
+  const ripple = document.createElement('div');
+  ripple.className = 'avatar-ripple';
+  const style = avatarEl.style;
+  ripple.style.top = style.top;
+  ripple.style.left = style.left;
+  ripple.style.color = AGENT_COLORS[avatarEl.dataset.role] || '#fff';
+  document.getElementById('room').appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+}
+
+/** Show a speech bubble above the avatar with the first 6 words */
+function showSpeechBubble(role, text) {
+  if (!currentSettings.speechBubbles) return;
+  const av = document.getElementById(`av-${role}`);
+  if (!av) return;
+  // Remove existing bubbles for this avatar
+  document.querySelectorAll(`.speech-bubble[data-role="${role}"]`).forEach(b => b.remove());
+
+  const words = text.trim().split(/\s+/).slice(0, 6);
+  const preview = words.join(' ') + (text.trim().split(/\s+/).length > 6 ? '…' : '');
+
+  const bubble = document.createElement('div');
+  bubble.className = 'speech-bubble';
+  bubble.dataset.role = role;
+  // Position above the avatar (parse the top% to place bubble higher)
+  const topPct = parseFloat(av.style.top);
+  const leftPct = parseFloat(av.style.left);
+  const above = topPct > 30;
+  bubble.style.left = `${leftPct}%`;
+  if (above) {
+    bubble.style.top = `calc(${topPct}% - 60px)`;
+  } else {
+    bubble.style.top = `calc(${topPct}% + 24px)`;
+    bubble.classList.add('bubble-below');
+  }
+  bubble.textContent = preview;
+  document.getElementById('room').appendChild(bubble);
+  bubble.addEventListener('animationend', () => bubble.remove());
+}
+
+/** Set room atmosphere state */
+function setAtmosphere(state) {
+  const overlay = document.getElementById('atmosphere');
+  const label = document.getElementById('atm-label');
+  overlay.className = state;
+  const labels = {
+    idle: '', debating: 'DEBATING', heated: 'HEATED',
+    deadlock: 'DEADLOCK', solution: 'CONVERGING', verdict: 'VERDICT',
+  };
+  label.textContent = labels[state] || '';
+
+  // Deadlock flash
+  if (state === 'deadlock') {
+    overlay.style.background = 'rgba(220,0,0,0.35)';
+    setTimeout(() => { overlay.className = 'deadlock'; }, 150);
+  }
+}
+
+/** Gold wash animation for solution convergence */
+function solutionWash() {
+  const overlay = document.getElementById('atmosphere');
+  overlay.style.background = 'rgba(255,200,80,0.12)';
+  setTimeout(() => { overlay.className = 'solution'; }, 800);
+}
+
+/** Draw an SVG agreement line between two agents */
+function drawAgreementLine(roleA, roleB) {
+  const svg = document.getElementById('agreement-svg');
+  const room = document.getElementById('room');
+  const avA = document.getElementById(`av-${roleA}`);
+  const avB = document.getElementById(`av-${roleB}`);
+  if (!avA || !avB) return;
+
+  // Get positions from style (percent)
+  const rw = room.offsetWidth, rh = room.offsetHeight;
+  const ax = (parseFloat(avA.style.left) / 100) * rw;
+  const ay = (parseFloat(avA.style.top)  / 100) * rh;
+  const bx = (parseFloat(avB.style.left) / 100) * rw;
+  const by = (parseFloat(avB.style.top)  / 100) * rh;
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', ax); line.setAttribute('y1', ay);
+  line.setAttribute('x2', bx); line.setAttribute('y2', by);
+  line.setAttribute('stroke', AGENT_COLORS[roleA] || '#fff');
+  line.setAttribute('stroke-width', '1.5');
+  line.setAttribute('stroke-dasharray', '6 4');
+  line.setAttribute('opacity', '0');
+  line.style.transition = 'opacity 0.4s ease';
+  svg.appendChild(line);
+
+  // Animate: draw in → hold → fade out
+  requestAnimationFrame(() => {
+    line.setAttribute('opacity', '0.35');
+    setTimeout(() => {
+      line.style.opacity = '0';
+      setTimeout(() => line.remove(), 500);
+    }, 1800);
+  });
+}
+
+/* ============================================================
+   CHAT PANEL HELPERS
+   ============================================================ */
+const chatMessages = document.getElementById('chat-messages');
+
+/** Technical and emotional keywords to highlight in messages */
+const KW_TECH    = new Set(['API','JWT','CI/CD','GDPR','MVP','ROI','SLA','KPI','SSO','OAuth','TLS','CDN','SDK','COGS','LTV','ARR','MRR','CAC','ARPU','SaaS','infra','schema','migration','endpoint','pipeline','runbook','latency','throughput','compliance','auth','RBAC']);
+const KW_EMOTION = new Set(['no','block','critical','never','must','wrong','fail','risk','danger','urgent','immediately','reject','veto','refuse','cannot','won\'t']);
+
+/**
+ * Highlight keywords in a word.
+ * Returns an HTML string.
+ */
+function highlightWord(word, agentColor) {
+  const clean = word.replace(/[^a-zA-Z0-9'/\-]/g, '');
+  if (KW_TECH.has(clean)) {
+    return `<span class="kw-tech" style="color:${agentColor}">${word}</span>`;
+  }
+  if (KW_EMOTION.has(clean.toLowerCase())) {
+    return `<span class="kw-emotion" style="color:${agentColor}">${word}</span>`;
+  }
+  return word;
+}
+
+/**
+ * Render a system message (phase transition).
+ */
+function addSystemMessage(text) {
+  const el = document.createElement('div');
+  el.className = 'msg system';
+  el.innerHTML = `<div class="msg-body">${text}</div>`;
+  chatMessages.appendChild(el);
+  scrollChat();
+}
+
+/**
+ * Render an error message in chat.
+ */
+function addErrorMessage(role, text) {
+  const color = AGENT_COLORS[role] || '#fff';
+  const el = document.createElement('div');
+  el.className = 'msg error';
+  el.innerHTML = `
+    <div class="msg-header">
+      <div class="msg-pip" style="border-color:${color};color:${color}">${AGENT_PIPS[role] || role}</div>
+      <div class="msg-role" style="color:${color}">${role}</div>
+      <div class="msg-time">${fmtTime()}</div>
+    </div>
+    <div class="msg-body" style="border-color:${color}40">${text}</div>
+  `;
+  chatMessages.appendChild(el);
+  scrollChat();
+}
+
+/**
+ * Create a message element and stream words into it.
+ * Returns the final full text.
+ */
+async function streamMessageToUI(role, generator, stance, emotion, replyTo) {
+  const color = AGENT_COLORS[role] || '#fff';
+  const pip = AGENT_PIPS[role] || role;
+  const stanceClass = {
+    for: 'stance-for', against: 'stance-against', mixed: 'stance-mixed',
+    blocker: 'stance-blocking', solution: 'stance-solution', mediating: 'stance-mediating',
+  }[stance] || 'stance-mixed';
+  const stanceLabel = {
+    for: 'FOR', against: 'AGAINST', mixed: 'MIXED',
+    blocker: 'BLOCKING', solution: 'SOLUTION', mediating: 'MEDIATING',
+  }[stance] || 'MIXED';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg';
+
+  let headerHTML = `<div class="msg-header">
+    <div class="msg-pip" style="border-color:${color};color:${color}">${pip}</div>
+    <div class="msg-role" style="color:${color}">${role}</div>
+    <div class="msg-stance ${stanceClass}">${stanceLabel}</div>`;
+  if (emotion) headerHTML += `<div class="msg-emotion">${emotion}</div>`;
+  headerHTML += `<div class="msg-time">${fmtTime()}</div></div>`;
+
+  let html = headerHTML;
+  if (replyTo) {
+    html += `<div class="msg-reply">↩ responding to ${replyTo}</div>`;
+  }
+  html += `<div class="msg-body" style="border-color:${color}60" id="mb-${Date.now()}"></div>`;
+
+  wrapper.innerHTML = html;
+  chatMessages.appendChild(wrapper);
+  scrollChat();
+
+  const bodyEl = wrapper.querySelector('.msg-body');
+  const delayMap = { fast: 30, normal: 60, slow: 100 };
+  const delay = delayMap[currentSettings.speed] || 60;
+
+  let fullText = '';
+  let wordBuf = '';
+  let firstWord = true;
+
+  const flushWord = () => {
+    if (!wordBuf) return;
+    const wordHTML = highlightWord(wordBuf, color);
+    bodyEl.innerHTML += (firstWord ? '' : ' ') + wordHTML;
+    firstWord = false;
+    wordBuf = '';
+    if (currentSettings.autoScroll) scrollChat();
+  };
+
+  for await (const chunk of generator) {
+    if (STATE.abortFlag) break;
+    fullText += chunk;
+    for (const char of chunk) {
+      if (char === ' ' || char === '\n') {
+        flushWord();
+        await sleep(delay);
+      } else {
+        wordBuf += char;
+      }
+    }
+  }
+  flushWord(); // flush any remaining word
+
+  return fullText;
+}
+
+function scrollChat() {
+  if (currentSettings.autoScroll) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ============================================================
+   SPEAK — run one agent turn
+   ============================================================ */
+async function speakAgent(role, userPrompt, options = {}) {
+  if (STATE.abortFlag) return null;
+  const { replyTo = null, stanceOverride = null } = options;
+
+  // Build settings object with active model
+  const settings = {
+    ...currentSettings,
+    model: getActiveModel(currentSettings),
+  };
+
+  setSpeak(role);
+  showSpeechBubble(role, '…');
+
+  let stance = stanceOverride || 'mixed';
+  let fullText = '';
+
+  try {
+    const gen = streamAgent(PERSONAS[role], userPrompt, settings);
+    // We need to peek at content for stance detection, so we collect first chunk
+    // but then stream the rest — we'll detect stance after collecting full text
+    const tempGen = streamAgent(PERSONAS[role], userPrompt, settings);
+    fullText = await streamMessageToUI(role, tempGen, stance, null, replyTo);
+  } catch (err) {
+    clearSpeak();
+    addErrorMessage(role, `[${role}] ${err.message}`);
+    await sleep(600);
+    return null;
+  }
+
+  // Detect stance and emotion from the full response
+  const detectedStance = detectStance(fullText);
+  const emotion = detectEmotion(fullText, replyTo);
+
+  // Update state
+  STATE.messages.push({ role, text: fullText, stance: detectedStance, timestamp: Date.now(), emotion });
+  STATE.stances[role] = detectedStance;
+  if (detectedStance === 'blocker' && !STATE.blockers.includes(role)) {
+    STATE.blockers.push(role);
+  }
+  STATE.msgCount++;
+
+  // Update tension & atmosphere
+  STATE.tensionLevel = calcTension(STATE.stances, STATE.blockers, STATE.repeatedArgs);
+  if (STATE.tensionLevel > 60)      setAtmosphere('deadlock');
+  else if (STATE.tensionLevel > 30) setAtmosphere('heated');
+  else                              setAtmosphere('debating');
+
+  // Check for agreement lines
+  if (emotion === 'AGREEING' && replyTo) {
+    drawAgreementLine(role, replyTo);
+  }
+
+  // Update the message's stance tag now that we know it
+  // (We already rendered with 'mixed' — re-render the last message header)
+  const msgs = chatMessages.querySelectorAll('.msg:not(.system):not(.error)');
+  const lastMsg = msgs[msgs.length - 1];
+  if (lastMsg) {
+    const stanceEl = lastMsg.querySelector('.msg-stance');
+    if (stanceEl) {
+      const stanceMap = {
+        for: ['stance-for','FOR'], against: ['stance-against','AGAINST'],
+        mixed: ['stance-mixed','MIXED'], blocker: ['stance-blocking','BLOCKING'],
+      };
+      const [cls, label] = stanceMap[detectedStance] || ['stance-mixed','MIXED'];
+      stanceEl.className = `msg-stance ${cls}`;
+      stanceEl.textContent = label;
+    }
+    if (emotion) {
+      const header = lastMsg.querySelector('.msg-header');
+      const timeEl = header?.querySelector('.msg-time');
+      if (timeEl && !lastMsg.querySelector('.msg-emotion')) {
+        const eEl = document.createElement('div');
+        eEl.className = 'msg-emotion';
+        eEl.textContent = emotion;
+        header.insertBefore(eEl, timeEl);
+      }
+    }
+  }
+
+  await sleep(400); // brief pause between speakers
+  clearSpeak();
+  return { role, text: fullText, stance: detectedStance, emotion };
+}
+
+/* ============================================================
+   DEBATE ENGINE — 5 PHASES
+   ============================================================ */
+
+/**
+ * Build the debate context prompt sent to each agent.
+ * Includes recent messages so agents can respond to each other.
+ */
+function buildContext(topic, limitLast = 6) {
+  const recent = STATE.messages.slice(-limitLast);
+  const transcript = recent.map(m => `${m.role}: ${m.text}`).join('\n\n');
+  return `TOPIC UNDER DEBATE: "${topic}"
+
+RECENT DISCUSSION:
+${transcript || '(Opening statement — be direct and take a clear initial position.)'}
+
+Respond now from your role's perspective. Reference what others said if relevant. 3 sentences max.`;
+}
+
+/**
+ * Phase 1 — OPENING
+ * Round 1: C-suite opens. Round 2: Builders respond. Round 3: Business + external.
+ */
+async function runPhase1() {
+  addSystemMessage('── PHASE 1: OPENING ──');
+  STATE.phase = 'opening';
+  setAtmosphere('debating');
+  updatePhaseBadge('OPENING');
+
+  const active = role => currentSettings.activePersonas.includes(role);
+
+  // Round 1 — C-Suite
+  const cSuite = ['CEO','CTO','CFO','COO','CISO'].filter(active);
+  for (const role of cSuite) {
+    if (STATE.abortFlag) return;
+    await speakAgent(role, buildContext(STATE.topic, 0));
+  }
+
+  // Round 2 — Builders
+  const builders = ['PM','ENG','UX','DEVOPS','SEC','QA'].filter(active);
+  for (const role of builders) {
+    if (STATE.abortFlag) return;
+    const prevRole = STATE.messages.length > 0 ? STATE.messages[STATE.messages.length - 1].role : null;
+    await speakAgent(role, buildContext(STATE.topic), { replyTo: prevRole });
+  }
+
+  // Round 3 — Business + External
+  const business = ['SALES','LEGAL','SUPPORT','CLIENT'].filter(active);
+  for (const role of business) {
+    if (STATE.abortFlag) return;
+    const prevRole = STATE.messages.length > 0 ? STATE.messages[STATE.messages.length - 1].role : null;
+    await speakAgent(role, buildContext(STATE.topic), { replyTo: prevRole });
+  }
+}
+
+/**
+ * Phase 2 — CROSSFIRE
+ * 6 agents respond directly to the previous speaker.
+ * Mix of FOR / AGAINST / MIXED.
+ */
+async function runPhase2() {
+  addSystemMessage('── PHASE 2: CROSSFIRE ──');
+  STATE.phase = 'crossfire';
+  updatePhaseBadge('CROSSFIRE');
+
+  // Pick 6 active agents — prioritize those with strong stances
+  const active = currentSettings.activePersonas;
+  const forAgents     = active.filter(r => STATE.stances[r] === 'for').slice(0, 2);
+  const againstAgents = active.filter(r => STATE.stances[r] === 'against').slice(0, 3);
+  const mixedAgents   = active.filter(r => !['for','against'].includes(STATE.stances[r])).slice(0, 1);
+  const agents = shuffle([...forAgents, ...againstAgents, ...mixedAgents]).slice(0, 6);
+
+  let prevRole = STATE.messages.length > 0 ? STATE.messages[STATE.messages.length - 1].role : null;
+
+  for (const role of agents) {
+    if (STATE.abortFlag) return;
+
+    // Check for deadlock
+    const dlRoles = checkDeadlock(STATE.messages);
+    if (dlRoles) {
+      STATE.deadlockRoles = dlRoles;
+      setAtmosphere('deadlock');
+      addSystemMessage(`⚠ DEADLOCK DETECTED — ${dlRoles.join(' ↔ ')} — Calling PM to mediate`);
+      if (currentSettings.activePersonas.includes('PM')) {
+        await speakAgent('PM', buildContext(STATE.topic) + '\n\nYou are mediating a deadlock. Propose a concrete middle ground.', { stanceOverride: 'mediating' });
+      }
+      break;
+    }
+
+    // Check consensus — skip to phase 3 early
+    if (checkConsensus(STATE.stances)) {
+      STATE.consensusReached = true;
+      addSystemMessage('✓ Early consensus detected — moving to solution phase');
+      break;
+    }
+
+    const prompt = buildContext(STATE.topic) + `\n\nYou are responding directly to ${prevRole || 'the previous speaker'}. Make your position clear.`;
+    await speakAgent(role, prompt, { replyTo: prevRole });
+    prevRole = role;
+
+    // Track repeated argument pairs for deadlock detection
+    if (prevRole && role !== prevRole) {
+      const key = [prevRole, role].sort().join('-');
+      STATE.repeatedArgs[key] = (STATE.repeatedArgs[key] || 0) + 1;
+    }
+  }
+}
+
+/**
+ * Phase 3 — SOLUTION BUILDING
+ * PM proposes → CTO conditions → CFO conditions → CEO decides
+ */
+async function runPhase3() {
+  addSystemMessage('── PHASE 3: SOLUTION BUILDING ──');
+  STATE.phase = 'solution';
+  updatePhaseBadge('SOLUTION');
+  solutionWash();
+
+  const active = r => currentSettings.activePersonas.includes(r);
+
+  const solutionBase = buildContext(STATE.topic) +
+    `\n\nWe are now in the solution phase. The debate has surfaced concerns from: ${STATE.blockers.join(', ') || 'multiple parties'}. ` +
+    `Your job is to propose or shape a concrete path forward that addresses the blockers. Be specific.`;
+
+  if (active('PM'))  await speakAgent('PM',  solutionBase + '\n\nPropose a concrete phased plan that addresses the concerns raised.', { stanceOverride: 'solution' });
+  if (active('CTO')) await speakAgent('CTO', solutionBase + '\n\nState your technical conditions for this plan to work.', { replyTo: 'PM' });
+  if (active('CFO')) await speakAgent('CFO', solutionBase + '\n\nState your exact financial conditions for approval.', { replyTo: 'PM' });
+  if (active('CEO')) await speakAgent('CEO', solutionBase + '\n\nMake the call. What is the decision?', { replyTo: 'PM', stanceOverride: 'solution' });
+}
+
+/**
+ * Phase 4 — BLOCKER RESOLUTION
+ * Each hard-blocker role responds to the PM's solution proposal.
+ */
+async function runPhase4() {
+  if (STATE.blockers.length === 0) return;
+  addSystemMessage('── PHASE 4: BLOCKER RESOLUTION ──');
+  STATE.phase = 'resolution';
+  updatePhaseBadge('RESOLUTION');
+
+  const pmProposal = STATE.messages.filter(m => m.role === 'PM').slice(-1)[0]?.text || 'the proposed plan';
+
+  for (const blockerRole of STATE.blockers) {
+    if (STATE.abortFlag) return;
+    if (!currentSettings.activePersonas.includes(blockerRole)) continue;
+    const prompt = buildContext(STATE.topic) +
+      `\n\nPM has proposed: "${pmProposal.slice(0, 200)}"\n\n` +
+      `As the blocker, do you accept this plan or maintain your block? State exactly what would need to change for you to approve.`;
+    await speakAgent(blockerRole, prompt, { replyTo: 'PM' });
+
+    // Naive resolution check — if they don't re-block, consider resolved
+    const lastMsg = STATE.messages[STATE.messages.length - 1];
+    if (lastMsg && lastMsg.stance !== 'blocker') {
+      STATE.blockerConditions[blockerRole] = lastMsg.text;
+    }
+  }
+}
+
+/**
+ * Phase 5 — VERDICT
+ * Generate a structured JSON verdict from the LLM, display the card.
+ */
+async function runPhase5() {
+  addSystemMessage('── PHASE 5: VERDICT ──');
+  STATE.phase = 'verdict';
+  updatePhaseBadge('VERDICT');
+  setAtmosphere('verdict');
+
+  const resolvedBlockers = Object.keys(STATE.blockerConditions);
+  const unresolvedBlockers = STATE.blockers.filter(b => !resolvedBlockers.includes(b));
+  const forCount     = Object.values(STATE.stances).filter(s => s === 'for').length;
+  const againstCount = Object.values(STATE.stances).filter(s => s === 'against' || s === 'blocker').length;
+  const totalVoters  = Object.keys(STATE.stances).length;
+
+  // Determine ending type
+  let endingType;
+  const criticalBlockers = ['CISO','LEGAL','CFO'];
+  const hasCriticalBlock = unresolvedBlockers.some(b => criticalBlockers.includes(b));
+  if (hasCriticalBlock) {
+    endingType = 'hard_no';
+  } else if (STATE.deadlockRoles.length > 0 && unresolvedBlockers.length === 0) {
+    endingType = 'deadlock_broken';
+  } else if (totalVoters > 0 && forCount / totalVoters >= 0.7 && unresolvedBlockers.length === 0) {
+    endingType = 'consensus';
+  } else {
+    endingType = 'conditional';
+  }
+
+  // Build the verdict prompt
+  const transcript = STATE.messages.slice(-12).map(m => `${m.role} [${m.stance}]: ${m.text}`).join('\n\n');
+  const verdictPrompt = `
+You are generating a structured verdict for an org debate. Return ONLY valid JSON — no markdown, no explanation.
+
+TOPIC: "${STATE.topic}"
+ENDING TYPE: ${endingType}
+RESOLVED BLOCKERS: ${resolvedBlockers.join(', ') || 'none'}
+UNRESOLVED BLOCKERS: ${unresolvedBlockers.join(', ') || 'none'}
+STANCES: ${JSON.stringify(STATE.stances)}
+
+RECENT TRANSCRIPT:
+${transcript}
+
+Return this exact JSON structure:
+{
+  "endingType": "${endingType}",
+  "headline": "8 words max punchy verdict",
+  "summary": "2 sentences about what the org decided and why",
+  "steps": [
+    { "action": "specific action", "owner": "ROLE", "timeline": "Week X" },
+    { "action": "specific action", "owner": "ROLE", "timeline": "Week X" },
+    { "action": "specific action", "owner": "ROLE", "timeline": "Week X" },
+    { "action": "specific action", "owner": "ROLE", "timeline": "Week X" }
+  ],
+  "openRisks": ["risk 1", "risk 2"],
+  "dissenterNote": "What would change dissenters' minds"
+}
+`;
+
+  let verdictData = null;
+  try {
+    const settings = { ...currentSettings, model: getActiveModel(currentSettings) };
+    const raw = await collectResponse(
+      'You generate org debate verdicts as structured JSON only. No markdown. No explanation.',
+      verdictPrompt,
+      settings
+    );
+    verdictData = parseVerdictJSON(raw);
+  } catch (err) {
+    addErrorMessage('SYSTEM', `Could not generate verdict: ${err.message}`);
+  }
+
+  // Fallback verdict if LLM fails
+  if (!verdictData) {
+    verdictData = {
+      endingType,
+      headline: endingType === 'hard_no' ? 'Hard block — cannot proceed as-is' : 'Org has reached a decision',
+      summary: `The debate concluded with ${forCount} in favor and ${againstCount} opposed. ${unresolvedBlockers.length > 0 ? `Unresolved blocks from: ${unresolvedBlockers.join(', ')}.` : 'All blockers were resolved.'}`,
+      steps: [
+        { action: 'Review full debate transcript', owner: 'PM', timeline: 'Week 1' },
+        { action: 'Address open blockers', owner: 'COO', timeline: 'Week 1–2' },
+        { action: 'Reconvene with updated proposal', owner: 'CEO', timeline: 'Week 3' },
+        { action: 'Final go/no-go decision', owner: 'CEO', timeline: 'Week 4' },
+      ],
+      openRisks: unresolvedBlockers.map(b => `${b} has not resolved their block`),
+      dissenterNote: 'Unresolved blockers need explicit conditions met before approval.',
+    };
+  }
+
+  // Save to history
+  const history = loadHistory();
+  history.unshift({
+    topic: STATE.topic,
+    endingType: verdictData.endingType,
+    headline: verdictData.headline,
+    timestamp: Date.now(),
+  });
+  saveHistory(history);
+
+  showVerdict(verdictData);
+}
+
+/**
+ * Parse JSON from a raw LLM response (may have markdown fences).
+ */
+function parseVerdictJSON(raw) {
+  // Strip markdown code fences if present
+  const stripped = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+  // Find first { to last }
+  const start = stripped.indexOf('{');
+  const end   = stripped.lastIndexOf('}');
+  if (start === -1 || end === -1) throw new Error('No JSON found');
+  return JSON.parse(stripped.slice(start, end + 1));
+}
+
+/* ============================================================
+   VERDICT CARD DISPLAY
+   ============================================================ */
+function showVerdict(data) {
+  const panel = document.getElementById('verdict-panel');
+  const card  = document.getElementById('verdict-card');
+
+  const typeLabel = {
+    consensus: '✓ CONSENSUS', conditional: '◐ CONDITIONAL YES',
+    deadlock_broken: '↻ DEADLOCK BROKEN', hard_no: '✕ HARD NO',
+  }[data.endingType] || 'VERDICT';
+
+  const typeClass = `verdict-${data.endingType}`;
+
+  // Vote tally HTML
+  const voteHTML = Object.entries(STATE.stances).map(([role, stance]) => {
+    const sym = stance === 'for' ? '✓' : stance === 'against' || stance === 'blocker' ? '✗' : '~';
+    const cls = stance === 'for' ? 'vfor' : stance === 'against' || stance === 'blocker' ? 'vagainst' : 'vmixed';
+    return `<div class="verdict-vote ${cls}">${role} ${sym}</div>`;
+  }).join('');
+
+  // Steps HTML
+  const stepsHTML = (data.steps || []).map((s, i) => `
+    <div class="verdict-step">
+      <div class="verdict-step-num">0${i+1}</div>
+      <div class="verdict-step-action">${s.action}</div>
+      <div class="verdict-step-owner" style="color:${AGENT_COLORS[s.owner] || '#aaa'}">${s.owner}</div>
+      <div class="verdict-step-timeline">${s.timeline}</div>
+    </div>
+  `).join('');
+
+  // Risks HTML
+  const risksHTML = (data.openRisks || []).map(r => `<div class="verdict-risk">${r}</div>`).join('');
+
+  card.innerHTML = `
+    <div class="verdict-ending-badge ${typeClass}">${typeLabel}</div>
+    <div class="verdict-headline">${data.headline}</div>
+    <div class="verdict-divider"></div>
+    <div class="verdict-summary">${data.summary}</div>
+    ${stepsHTML ? `<div>
+      <div class="verdict-section-label">Action Plan</div>
+      ${stepsHTML}
+    </div>` : ''}
+    ${risksHTML ? `<div>
+      <div class="verdict-section-label">Open Risks</div>
+      <div class="verdict-risks">${risksHTML}</div>
+    </div>` : ''}
+    <div>
+      <div class="verdict-section-label">Vote Tally</div>
+      <div class="verdict-votes">${voteHTML}</div>
+    </div>
+    ${data.dissenterNote ? `<div class="verdict-dissenter">${data.dissenterNote}</div>` : ''}
+    <div class="verdict-actions">
+      <button class="verdict-btn" id="v-new">↩ New Debate</button>
+      <button class="verdict-btn" id="v-export">⬇ Export Markdown</button>
+    </div>
+  `;
+
+  panel.classList.add('visible');
+
+  document.getElementById('v-new').addEventListener('click', resetDebate);
+  document.getElementById('v-export').addEventListener('click', () => exportMarkdown(data));
+}
+
+/* ============================================================
+   EXPORT TO MARKDOWN
+   ============================================================ */
+function exportMarkdown(verdictData) {
+  const date = new Date().toISOString().split('T')[0];
+  const transcript = STATE.messages.map(m =>
+    `**${m.role}** [${m.stance}]\n> ${m.text}\n`
+  ).join('\n');
+
+  const stepsText = (verdictData.steps || []).map((s, i) =>
+    `${i+1}. **${s.action}** — ${s.owner} · ${s.timeline}`
+  ).join('\n');
+
+  const md = `# Dissent Debate — ${date}
+
+**Topic:** ${STATE.topic}
+**Provider:** ${currentSettings.provider} / ${getActiveModel(currentSettings)}
+**Outcome:** ${verdictData.endingType.toUpperCase()}
+
+---
+
+## Verdict
+
+### ${verdictData.headline}
+
+${verdictData.summary}
+
+### Action Plan
+
+${stepsText}
+
+### Open Risks
+
+${(verdictData.openRisks || []).map(r => `- ${r}`).join('\n')}
+
+### Vote Tally
+
+${Object.entries(STATE.stances).map(([r, s]) => `- ${r}: ${s}`).join('\n')}
+
+---
+
+## Full Transcript
+
+${transcript}
+`;
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `dissent-${date}-${STATE.topic.slice(0,30).replace(/\s+/g,'-').toLowerCase()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   DEBATE ORCHESTRATION
+   ============================================================ */
+async function startDebate(topic) {
+  if (STATE.isDebating) return;
+
+  // Reset state
+  STATE = {
+    topic,
+    messages: [], stances: {}, blockers: [], blockerConditions: {},
+    repeatedArgs: {}, phase: 'idle', tensionLevel: 0,
+    consensusReached: false, deadlockRoles: [], msgCount: 0,
+    settings: { ...currentSettings }, isDebating: true, abortFlag: false,
+  };
+
+  // Update UI
+  document.getElementById('topic-display').textContent = `"${topic}"`;
+  document.getElementById('verdict-panel').classList.remove('visible');
+  chatMessages.innerHTML = '';
+  document.getElementById('debate-btn').disabled = true;
+  document.getElementById('topic-input').disabled = true;
+
+  addSystemMessage(`Starting debate: "${topic}"`);
+
+  try {
+    await runPhase1();
+    if (STATE.abortFlag) return;
+    await runPhase2();
+    if (STATE.abortFlag) return;
+    await runPhase3();
+    if (STATE.abortFlag) return;
+    await runPhase4();
+    if (STATE.abortFlag) return;
+    await runPhase5();
+  } catch (err) {
+    addErrorMessage('SYSTEM', `Debate error: ${err.message}`);
+  } finally {
+    STATE.isDebating = false;
+    clearSpeak();
+    setAtmosphere('idle');
+    updatePhaseBadge('IDLE');
+    document.getElementById('debate-btn').disabled = false;
+    document.getElementById('topic-input').disabled = false;
+    document.getElementById('debate-btn').textContent = 'DEBATE';
+  }
+}
+
+function resetDebate() {
+  STATE.abortFlag = true;
+  STATE.isDebating = false;
+  document.getElementById('verdict-panel').classList.remove('visible');
+  chatMessages.innerHTML = '';
+  clearSpeak();
+  setAtmosphere('idle');
+  updatePhaseBadge('IDLE');
+  document.getElementById('topic-display').textContent = 'Drop a topic below and start the debate';
+  document.getElementById('debate-btn').disabled = false;
+  document.getElementById('debate-btn').textContent = 'DEBATE';
+  document.getElementById('topic-input').disabled = false;
+}
+
+function updatePhaseBadge(text) {
+  const badge = document.getElementById('phase-badge');
+  badge.textContent = text;
+  badge.classList.toggle('active', text !== 'IDLE');
+}
+
+/* ============================================================
+   VALIDATE API KEY (5-token ping)
+   ============================================================ */
+async function validateKey(settings) {
+  const testSettings = {
+    ...settings,
+    model: getActiveModel(settings),
+  };
+  try {
+    let count = 0;
+    for await (const _ of streamAgent('You are a test.', 'Say: OK', testSettings)) {
+      if (++count >= 3) break; // just need a few tokens
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
+/* ============================================================
+   SETTINGS PANEL — build & wire UI
+   ============================================================ */
+function populateProviderDropdown(selectEl, currentProvider) {
+  selectEl.innerHTML = '';
+  Object.entries(PROVIDERS).forEach(([key, p]) => {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = p.name + (p.freeNote ? ` (${p.freeNote})` : '') + (p.localNote ? ' 🖥' : '');
+    if (key === currentProvider) opt.selected = true;
+    selectEl.appendChild(opt);
+  });
+}
+
+function populateModelDropdown(selectEl, providerKey, currentModel) {
+  selectEl.innerHTML = '';
+  const p = PROVIDERS[providerKey];
+  (p?.models || []).forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.label;
+    if (m.id === currentModel) opt.selected = true;
+    selectEl.appendChild(opt);
+  });
+  if (!selectEl.value && p?.models?.length > 0) selectEl.value = p.models[0].id;
+}
+
+function syncSettingsUI(s) {
+  const p = PROVIDERS[s.provider] || PROVIDERS.groq;
+
+  // Provider dropdowns (settings panel + bottom bar)
+  populateProviderDropdown(document.getElementById('s-provider'), s.provider);
+  populateProviderDropdown(document.getElementById('provider-select'), s.provider);
+
+  // Model dropdowns
+  populateModelDropdown(document.getElementById('s-model'), s.provider, s.model);
+  populateModelDropdown(document.getElementById('model-select'), s.provider, s.model);
+
+  // API key
+  document.getElementById('s-apikey').value = s.apiKey || '';
+
+  // Base URL row
+  const buRow = document.getElementById('s-baseurl-row');
+  const buInput = document.getElementById('s-baseurl');
+  if (p.allowCustomURL) {
+    buRow.style.display = '';
+    buInput.value = s.baseURL || p.baseURL;
+  } else {
+    buRow.style.display = 'none';
+    buInput.value = p.baseURL;
+  }
+
+  // Custom model row
+  const cmRow = document.getElementById('s-custom-model-row');
+  if (p.allowCustomModel) {
+    cmRow.style.display = '';
+    document.getElementById('s-custom-model').value = s.customModel || '';
+  } else {
+    cmRow.style.display = 'none';
+  }
+
+  // Key docs link
+  const docsLink = document.getElementById('s-key-docs-link');
+  if (p.keyDocs) {
+    docsLink.innerHTML = `<a href="${p.keyDocs}" target="_blank" rel="noopener" style="color:var(--CTO);text-decoration:none;">Get API key →</a>`;
+  } else {
+    docsLink.innerHTML = '';
+  }
+
+  // Speed buttons
+  document.querySelectorAll('.speed-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.speed === s.speed);
+  });
+
+  // Toggles
+  setToggle('t-autoscroll', s.autoScroll);
+  setToggle('t-bubbles', s.speechBubbles);
+}
+
+function setToggle(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('on', val);
+}
+
+function buildPersonaGrid(activePersonas) {
+  const grid = document.getElementById('persona-grid');
+  grid.innerHTML = '';
+  ALL_ROLES.forEach(role => {
+    const active = activePersonas.includes(role);
+    const div = document.createElement('div');
+    div.className = `persona-toggle${active ? '' : ' off'}`;
+    div.dataset.role = role;
+    div.innerHTML = `<div class="dot" style="background:${AGENT_COLORS[role]}"></div>${role}`;
+    div.addEventListener('click', () => {
+      const s = loadSettings();
+      if (s.activePersonas.includes(role)) {
+        if (s.activePersonas.length <= 3) return; // keep at least 3
+        s.activePersonas = s.activePersonas.filter(r => r !== role);
+      } else {
+        s.activePersonas.push(role);
+      }
+      saveSettings(s);
+      currentSettings = s;
+      div.classList.toggle('off', !s.activePersonas.includes(role));
+    });
+    grid.appendChild(div);
+  });
+}
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  const history = loadHistory();
+  if (history.length === 0) {
+    list.innerHTML = '<div style="font-size:11px;color:var(--text-dim);">No debates yet.</div>';
+    return;
+  }
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item">
+      <div class="h-topic">${h.topic}</div>
+      <div class="h-type h-type-${h.endingType}">${(h.endingType||'').replace('_',' ').toUpperCase()}</div>
+    </div>
+  `).join('');
+}
+
+function openSettings() {
+  syncSettingsUI(currentSettings);
+  buildPersonaGrid(currentSettings.activePersonas);
+  renderHistory();
+  document.getElementById('settings-panel').classList.add('open');
+  document.getElementById('settings-overlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-panel').classList.remove('open');
+  document.getElementById('settings-overlay').classList.remove('open');
+}
+
+function collectSettingsFromUI() {
+  const providerKey = document.getElementById('s-provider').value;
+  const p = PROVIDERS[providerKey] || PROVIDERS.groq;
+  const apiKey = document.getElementById('s-apikey').value.trim();
+  const model = document.getElementById('s-model').value;
+  const customModel = document.getElementById('s-custom-model').value.trim();
+  const baseURL = p.allowCustomURL
+    ? (document.getElementById('s-baseurl').value.trim() || p.baseURL)
+    : p.baseURL;
+
+  return {
+    ...loadSettings(),
+    provider: providerKey,
+    model,
+    customModel,
+    apiKey,
+    baseURL,
+    format: p.format,
+  };
+}
+
+/* Wire settings panel events */
+function initSettingsPanel() {
+  document.getElementById('settings-btn').addEventListener('click', openSettings);
+  document.getElementById('settings-close').addEventListener('click', closeSettings);
+  document.getElementById('settings-overlay').addEventListener('click', closeSettings);
+
+  // Provider change in settings
+  document.getElementById('s-provider').addEventListener('change', e => {
+    const pk = e.target.value;
+    const p = PROVIDERS[pk];
+    const s = collectSettingsFromUI();
+    s.provider = pk;
+    s.model = p.models[0]?.id || '';
+    s.baseURL = p.baseURL;
+    s.format = p.format;
+    saveSettings(s);
+    currentSettings = s;
+    syncSettingsUI(s);
+  });
+
+  // Model change
+  document.getElementById('s-model').addEventListener('change', e => {
+    const s = collectSettingsFromUI();
+    s.model = e.target.value;
+    saveSettings(s);
+    currentSettings = s;
+  });
+
+  // API key change
+  document.getElementById('s-apikey').addEventListener('input', () => {
+    const s = collectSettingsFromUI();
+    saveSettings(s);
+    currentSettings = s;
+  });
+
+  // Show/hide key toggle
+  document.getElementById('s-key-toggle').addEventListener('click', () => {
+    const inp = document.getElementById('s-apikey');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
+
+  // Base URL change
+  document.getElementById('s-baseurl').addEventListener('input', () => {
+    const s = collectSettingsFromUI();
+    saveSettings(s);
+    currentSettings = s;
+  });
+
+  // Custom model change
+  document.getElementById('s-custom-model').addEventListener('input', () => {
+    const s = collectSettingsFromUI();
+    saveSettings(s);
+    currentSettings = s;
+  });
+
+  // Speed buttons
+  document.querySelectorAll('.speed-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!btn.dataset.speed) return; // skip clear-history btn
+      const s = loadSettings();
+      s.speed = btn.dataset.speed;
+      saveSettings(s);
+      currentSettings = s;
+      document.querySelectorAll('.speed-btn[data-speed]').forEach(b => b.classList.toggle('active', b.dataset.speed === s.speed));
+    });
+  });
+
+  // Auto-scroll toggle
+  document.getElementById('t-autoscroll').addEventListener('click', function() {
+    const s = loadSettings();
+    s.autoScroll = !s.autoScroll;
+    saveSettings(s);
+    currentSettings = s;
+    setToggle('t-autoscroll', s.autoScroll);
+  });
+
+  // Speech bubbles toggle
+  document.getElementById('t-bubbles').addEventListener('click', function() {
+    const s = loadSettings();
+    s.speechBubbles = !s.speechBubbles;
+    saveSettings(s);
+    currentSettings = s;
+    setToggle('t-bubbles', s.speechBubbles);
+  });
+
+  // Test connection
+  document.getElementById('test-btn').addEventListener('click', async () => {
+    const result = document.getElementById('test-result');
+    const btn = document.getElementById('test-btn');
+    btn.textContent = 'Testing…';
+    btn.disabled = true;
+    result.textContent = '';
+    result.className = '';
+    const s = collectSettingsFromUI();
+    const { ok, error } = await validateKey(s);
+    btn.textContent = 'Test Connection';
+    btn.disabled = false;
+    if (ok) {
+      result.textContent = '✓ Connected successfully';
+      result.className = 'test-result ok';
+    } else {
+      result.textContent = `✗ ${error || 'Connection failed'}`;
+      result.className = 'test-result err';
+    }
+  });
+
+  // Clear history
+  document.getElementById('clear-history-btn').addEventListener('click', () => {
+    saveHistory([]);
+    renderHistory();
+  });
+
+  // Bottom bar provider change
+  document.getElementById('provider-select').addEventListener('change', e => {
+    const pk = e.target.value;
+    const p = PROVIDERS[pk];
+    const s = loadSettings();
+    s.provider = pk;
+    s.model = p.models[0]?.id || '';
+    s.baseURL = p.baseURL;
+    s.format = p.format;
+    s.customModel = '';
+    saveSettings(s);
+    currentSettings = s;
+    populateModelDropdown(document.getElementById('model-select'), pk, s.model);
+  });
+
+  // Bottom bar model change
+  document.getElementById('model-select').addEventListener('change', e => {
+    const s = loadSettings();
+    s.model = e.target.value;
+    saveSettings(s);
+    currentSettings = s;
+  });
+}
+
+/* ============================================================
+   ONBOARDING
+   ============================================================ */
+function initOnboarding() {
+  // Populate onboarding provider dropdown
+  populateProviderDropdown(document.getElementById('ob-provider'), currentSettings.provider || 'groq');
+
+  // Update key docs link when provider changes
+  document.getElementById('ob-provider').addEventListener('change', e => {
+    const p = PROVIDERS[e.target.value];
+    updateObLink(p);
+  });
+  updateObLink(PROVIDERS[currentSettings.provider] || PROVIDERS.groq);
+
+  document.getElementById('ob-start-btn').addEventListener('click', async () => {
+    const providerKey = document.getElementById('ob-provider').value;
+    const apiKey = document.getElementById('ob-apikey').value.trim();
+    const p = PROVIDERS[providerKey];
+
+    if (p.requiresKey && !apiKey) {
+      document.getElementById('ob-apikey').style.borderColor = 'var(--CISO)';
+      return;
+    }
+
+    // Save settings
+    const s = loadSettings();
+    s.provider = providerKey;
+    s.apiKey = apiKey;
+    s.baseURL = p.baseURL;
+    s.format = p.format;
+    s.model = p.models[0]?.id || '';
+    saveSettings(s);
+    currentSettings = s;
+
+    // Update bottom bar
+    syncSettingsUI(s);
+
+    // Dismiss onboarding
+    const ob = document.getElementById('onboarding');
+    ob.classList.add('hidden');
+    setTimeout(() => ob.remove(), 600);
+  });
+}
+
+function updateObLink(p) {
+  const link = document.getElementById('ob-key-link');
+  if (p?.keyDocs) {
+    link.innerHTML = `<a href="${p.keyDocs}" target="_blank" rel="noopener" style="color:var(--CTO);text-decoration:none;font-size:12px;">Get a free key →</a>`;
+  } else if (p?.localNote) {
+    link.innerHTML = `<span style="color:var(--CFO);font-size:11px;">🖥 ${p.localNote}</span>`;
+  } else {
+    link.innerHTML = '';
+  }
+}
+
+/* ============================================================
+   MOBILE AGENT STRIP
+   ============================================================ */
+function buildAgentStrip() {
+  const strip = document.getElementById('agent-strip');
+  ALL_ROLES.forEach(role => {
+    const div = document.createElement('div');
+    div.className = 'strip-avatar';
+    div.dataset.role = role;
+    div.style.borderColor = AGENT_COLORS[role];
+    div.style.color = AGENT_COLORS[role];
+    div.textContent = AGENT_PIPS[role];
+    strip.appendChild(div);
+  });
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ============================================================
+   DEBATE BUTTON
+   ============================================================ */
+document.getElementById('debate-btn').addEventListener('click', () => {
+  const topic = document.getElementById('topic-input').value.trim();
+  if (!topic) {
+    document.getElementById('topic-input').focus();
+    return;
+  }
+  if (!currentSettings.apiKey && PROVIDERS[currentSettings.provider]?.requiresKey) {
+    openSettings();
+    return;
+  }
+  startDebate(topic);
+});
+
+document.getElementById('topic-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    document.getElementById('debate-btn').click();
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  currentSettings = loadSettings();
+
+  // Init UI components
+  initSettingsPanel();
+  buildAgentStrip();
+  syncSettingsUI(currentSettings);
+
+  // Show onboarding if no API key
+  const providerNeedsKey = PROVIDERS[currentSettings.provider]?.requiresKey !== false;
+  if (!currentSettings.apiKey && providerNeedsKey) {
+    initOnboarding();
+  } else {
+    document.getElementById('onboarding').classList.add('hidden');
+    setTimeout(() => document.getElementById('onboarding').remove(), 10);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
